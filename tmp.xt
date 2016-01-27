@@ -31,7 +31,12 @@ while(i<=100)
 }
 print(sum);
 
+def add2num(a,b)
+{
+    return a+b;
+}
 
+print(add2num(4,67));
 
 
 

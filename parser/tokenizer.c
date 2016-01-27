@@ -14,6 +14,7 @@
 界符
 标识符
 */
+
 #define is_identifier_start(c) (\
               (c >= 'a' && c <= 'z')\
                || (c >= 'A' && c <= 'Z')\
@@ -50,6 +51,8 @@
 #define I_RIGHT_K_EQAUL 21
 #define I_LEFT_K_EQAUL 22
 #define I_EQAUL_VAR 23
+#define I_COMMA 24
+#define I_DEF 25
 
 char *type_print[100] = {
 "if",
@@ -58,10 +61,10 @@ char *type_print[100] = {
 "string",
 "iden",
 "number",
-"f: {",
-"f: }",
-"f: (",
-"f: )",
+"j: {",
+"j: }",
+"j: (",
+"j: )",
 "f: >",
 "f: <",
 "f: >=",
@@ -76,11 +79,8 @@ char *type_print[100] = {
 "f: >=",
 "f: <=",
 "f: ==",
-};
-char *dic[20] = {
-"if",
-"else",
-"while",
+"j: ,",
+"def",
 };
 
 struct tok_input{
@@ -121,13 +121,10 @@ int is_white(char ch)
 //对比关键字
 int which_keywords(char *s)
 {
-    for(int i=0;i<NUM_KEYWORDS;i++)
-    {
-        if(0==strcmp(s,dic[i]))
-        {
-            return i;
-        }
-    }
+         if(0==strcmp(s,"if")) return I_IF;
+    else if(0==strcmp(s,"else")) return I_ELSE;
+    else if(0==strcmp(s,"while")) return I_WHILE;
+    else if(0==strcmp(s,"def")) return I_DEF;
     return -1;
 }
 void print_token(struct token *t)
@@ -313,6 +310,9 @@ long int get_next_token(char *s,struct token *t)
                 t->is=tmp;
                 break;
             }
+        case ',':
+            t->type=I_COMMA;
+            break;
         }
     }
     return s-s_start;
