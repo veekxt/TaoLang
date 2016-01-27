@@ -47,6 +47,9 @@
 #define I_MULTIPLY 18
 #define I_DIVIDE 19
 #define I_EQAUL 20
+#define I_RIGHT_K_EQAUL 21
+#define I_LEFT_K_EQAUL 22
+#define I_EQAUL_VAR 23
 
 char *type_print[100] = {
 "if",
@@ -55,21 +58,24 @@ char *type_print[100] = {
 "string",
 "iden",
 "number",
-"f:{",
-"f:}",
-"f:(",
-"f:)",
-"f:>",
-"f:<",
-"f:>=",
-"f:<=",
-"f:!=",
-"j:;",
-"f:+",
-"f:-",
-"f:*",
-"f:/",
-"f:=",
+"f: {",
+"f: }",
+"f: (",
+"f: )",
+"f: >",
+"f: <",
+"f: >=",
+"f: <=",
+"f: !=",
+"j: ;",
+"f: +",
+"f: -",
+"f: *",
+"f: /",
+"f: =",
+"f: >=",
+"f: <=",
+"f: ==",
 };
 char *dic[20] = {
 "if",
@@ -240,7 +246,11 @@ long int get_next_token(char *s,struct token *t)
             t->type=I_DIVIDE;
             break;
         case '=':
-            t->type=I_EQAUL;
+            switch(*(s++))
+            {
+                case '=':t->type=I_EQAUL_VAR;break;
+                default:t->type=I_EQAUL;s--;
+            }
             break;
         case '(':
             t->type=I_LEFT_SMALLQ;
@@ -255,10 +265,18 @@ long int get_next_token(char *s,struct token *t)
             t->type=I_RIGHT_BIGQ;
             break;
         case '<':
-            t->type=I_LEFT_K;
+            switch(*(s++))
+            {
+                case '=':t->type=I_LEFT_K_EQAUL;break;
+                default:t->type=I_LEFT_K;s--;
+            }
             break;
         case '>':
-            t->type=I_RIGHT_K;
+            switch(*(s++))
+            {
+                case '=':t->type=I_RIGHT_K_EQAUL;puts("OOOK");break;
+                default:t->type=I_RIGHT_K;s--;
+            }
             break;
         }
     }
