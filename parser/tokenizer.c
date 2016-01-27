@@ -274,10 +274,29 @@ long int get_next_token(char *s,struct token *t)
         case '>':
             switch(*(s++))
             {
-                case '=':t->type=I_RIGHT_K_EQAUL;puts("OOOK");break;
+                case '=':t->type=I_RIGHT_K_EQAUL;break;
                 default:t->type=I_RIGHT_K;s--;
             }
             break;
+
+        case '"':
+            {
+                tok.start=s;
+
+                while(!(*s=='"'&& !(*(s-1)=='\\')) || *s=='\0')
+                {
+                    s++;
+                }
+                s++;
+                int len_ch=s-tok.start;
+                char *tmp=malloc(sizeof(char)*(len_ch));
+                memcpy(tmp,tok.start,len_ch);
+                *(tmp+(s-tok.start)-1)='\0';
+                tok.buf=tmp;
+                t->type=I_STRING;
+                t->is=tmp;
+                break;
+            }
         }
     }
     return s-s_start;
