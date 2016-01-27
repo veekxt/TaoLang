@@ -13,10 +13,10 @@ a=123;
 b=7;
 tmp=b+c;
 if(2<3){
-	print("2<3");
+	print("2 is less 3");
 }
 else{
-	print("2>3");
+	print("2 is more 3");
 }
 while(c>=b){
 b=2*b;
