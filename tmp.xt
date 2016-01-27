@@ -23,7 +23,13 @@ b=2*b;
 tmp=tmp-1;
 }
 print(b==tmp);
-
+sum=0;
+i=0;
+while(i<=100)
+{
+    sum=sum+i;
+}
+print(sum);
 
 
 

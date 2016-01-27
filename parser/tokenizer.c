@@ -2,17 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 /**
-ÀàÐÍ£º
-±êÁ¿
-    ×Ö·û´®
-    Êý×Ö
-        ÕûÐÎ
-        ¸¡µã
+ç±»åž‹ï¼š
+æ ‡é‡
+    å­—ç¬¦ä¸²
+    æ•°å­—
+        æ•´å½¢
+        æµ®ç‚¹
     bool
-¹Ø¼ü×Ö
-ÔËËã·û
-½ç·û
-±êÊ¶·û
+å…³é”®å­—
+è¿ç®—ç¬¦
+ç•Œç¬¦
+æ ‡è¯†ç¬¦
 */
 #define is_identifier_start(c) (\
               (c >= 'a' && c <= 'z')\
@@ -94,7 +94,7 @@ int type;
 char *is;
 };
 
-//»ñÈ¡ÎÄ¼þ³¤¶È
+//èŽ·å–æ–‡ä»¶é•¿åº¦
 long int get_file_size(FILE *fp)
 {
     fseek(fp,0,SEEK_END);
@@ -102,7 +102,7 @@ long int get_file_size(FILE *fp)
     rewind(fp);
     return size;
 }
-//°ÑÎÄ¼þ¶ÁÈë×Ö·û´®
+//æŠŠæ–‡ä»¶è¯»å…¥å­—ç¬¦ä¸²
 char * file_into_string(FILE *fp)
 {
     long int file_size=get_file_size(fp);
@@ -112,13 +112,13 @@ char * file_into_string(FILE *fp)
     return s;
 }
 
-//ÅÐ¶Ï×Ö·ûÊÇ·ñÊÇ¿Õ°×·Ö¸ô·û
+//åˆ¤æ–­å­—ç¬¦æ˜¯å¦æ˜¯ç©ºç™½åˆ†éš”ç¬¦
 int is_white(char ch)
 {
     if(ch=='\n' || ch=='\t' || ch== ' ' || ch=='\r'){return 1;}
     else{return 0;}
 }
-//¶Ô±È¹Ø¼ü×Ö
+//å¯¹æ¯”å…³é”®å­—
 int which_keywords(char *s)
 {
     for(int i=0;i<NUM_KEYWORDS;i++)
@@ -132,10 +132,15 @@ int which_keywords(char *s)
 }
 void print_token(struct token *t)
 {
-    printf("%-20s %-20s\n",type_print[t->type],t->is);
+    char *is_tmp=t->is;
+    if(strlen(t->is)==0)
+    {
+        is_tmp=type_print[t->type]+3;
+    }
+    printf("%-20s %-20s\n",type_print[t->type],is_tmp);
 }
 
-//´ÓsÆðÊ¼¶ÁÈ¡Ò»¸ö´ÊËØ,·µ»Ø¶ÁÈ¡µÄ×Ö·ûÊý
+//ä»Žsèµ·å§‹è¯»å–ä¸€ä¸ªè¯ç´ ,è¿”å›žè¯»å–çš„å­—ç¬¦æ•°
 long int get_next_token(char *s,struct token *t)
 {
     if(*s=='\0') return 0;
@@ -190,13 +195,13 @@ long int get_next_token(char *s,struct token *t)
         else break;
     }
     if(*s=='\0') return 0;
-    //×ÖÄ¸¿ªÍ·
+    //å­—æ¯å¼€å¤´
     tok.start=s;
     if(is_identifier_start(*s))
     {
         s++;
         len_ch++;
-        //»ñÈ¡ÍêÕû±êÊ¶·û»ò¹Ø¼ü×Ö
+        //èŽ·å–å®Œæ•´æ ‡è¯†ç¬¦æˆ–å…³é”®å­—
         while(is_identifier_char(*s))
         {
             len_ch++;
@@ -218,11 +223,11 @@ long int get_next_token(char *s,struct token *t)
             t->is=tmp;
         }
     }
-    else if(*s>'0' && *s<='9')
+    else if(*s>='0' && *s<='9')
     {
         s++;
         len_ch++;
-        //»ñÈ¡ÍêÕû±êÊ¶·û»ò¹Ø¼ü×Ö
+        //èŽ·å–å®Œæ•´æ ‡è¯†ç¬¦æˆ–å…³é”®å­—
         while(*s>='0' && *s<='9')
         {
             len_ch++;
