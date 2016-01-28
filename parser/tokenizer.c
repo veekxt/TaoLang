@@ -53,6 +53,7 @@
 #define I_EQAUL_VAR 23
 #define I_COMMA 24
 #define I_DEF 25
+#define I_RETURN 26
 
 char *type_print[100] = {
 "if",
@@ -81,6 +82,7 @@ char *type_print[100] = {
 "f: ==",
 "j: ,",
 "def",
+"return",
 };
 
 struct tok_input{
@@ -125,7 +127,8 @@ int which_keywords(char *s)
     else if(0==strcmp(s,"else")) return I_ELSE;
     else if(0==strcmp(s,"while")) return I_WHILE;
     else if(0==strcmp(s,"def")) return I_DEF;
-    return -1;
+    else if(0==strcmp(s,"return")) return I_RETURN;
+    else return -1;
 }
 void print_token(struct token *t)
 {
