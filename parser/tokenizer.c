@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "tokenizer.h"
 /**
 类型：
 标量
@@ -25,35 +26,6 @@
                || (c >= 'A' && c <= 'Z')\
                || (c >= '0' && c <= '9')\
                || c == '_')
-
-#define NUM_KEYWORDS 3
-#define I_IF 0
-#define I_ELSE 1
-#define I_WHILE 2
-#define I_STRING 3
-#define I_IDEN 4
-#define I_NUMBER 5
-#define I_LEFT_BIGQ 6
-#define I_RIGHT_BIGQ 7
-#define I_LEFT_SMALLQ 8
-#define I_RIGHT_SMALLQ 9
-#define I_RIGHT_K 10
-#define I_LEFT_K 11
-#define I_BIGER_EQAUL 12
-#define I_SMALLER_EQAUL 13
-#define I_NOT_EQAUL 14
-#define I_END_LINE 15
-#define I_ADD 16
-#define I_REDUCE 17
-#define I_MULTIPLY 18
-#define I_DIVIDE 19
-#define I_EQAUL 20
-#define I_RIGHT_K_EQAUL 21
-#define I_LEFT_K_EQAUL 22
-#define I_EQAUL_VAR 23
-#define I_COMMA 24
-#define I_DEF 25
-#define I_RETURN 26
 
 char *type_print[100] = {
 "if",
@@ -89,11 +61,6 @@ struct tok_input{
 char *start;
 char *end;
 char *buf;
-};
-
-struct token{
-int type;
-char *is;
 };
 
 //获取文件长度
@@ -321,19 +288,32 @@ long int get_next_token(char *s,struct token *t)
     return s-s_start;
 }
 
-int main()
+int file_to_token_to_array(const char *file_name,struct token_list *tl)
 {
-    FILE *so =fopen("tmp.xt","rb");
-    char *string_in = file_into_string(so);
-    struct token t;
-    for(;;)
+    FILE *so =fopen(file_name,"rb");
+    if(so==NULL)return -1;
+    else
     {
-        int a=get_next_token(string_in,&t);
-        string_in+=a;
-        if(a==0)break;
-        else{
-            print_token(&t);
+        int init_len=10000;//词素数组初始大小
+        tl->t=(struct token *)malloc(sizeof(struct token)*init_len);
+        char *string_in = file_into_string(so);
+        struct token tmp;
+        int i;
+        for(i=0;;i++)
+        {
+            int a=get_next_token(string_in,&tmp);
+            string_in+=a;
+            if(a==0)break;
+            else{
+                if(i>=init_len){
+                    tl->t = (struct token *)realloc(tl->t,sizeof(struct token)*(i+1));
+                }
+                tl->t[i]=tmp;
+
+            }
         }
+        tl->max_len=i;
+        tl->n=0;
     }
     return 0;
 }
