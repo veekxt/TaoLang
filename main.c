@@ -3,7 +3,7 @@
 #include <string.h>
 #include "parser/tokenizer.h"
 
-int main(void)
+int main_t(void)
 {
     struct token_list tl;
     file_to_token_to_array("tmp.xt",&tl);

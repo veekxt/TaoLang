@@ -55,6 +55,7 @@ char *type_print[100] = {
 "j: ,",
 "def",
 "return",
+"un_def",
 };
 
 struct tok_input{
