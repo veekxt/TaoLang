@@ -27,41 +27,43 @@
                || (c >= '0' && c <= '9')\
                || c == '_')
 
-char *type_print[100] = {
-"if",
-"else",
-"while",
-"string",
-"iden",
-"number",
-"j: {",
-"j: }",
-"j: (",
-"j: )",
-"f: >",
-"f: <",
-"f: >=",
-"f: <=",
-"f: !=",
-"j: ;",
-"f: +",
-"f: -",
-"f: *",
-"f: /",
-"f: =",
-"f: >=",
-"f: <=",
-"f: ==",
-"j: ,",
-"def",
-"return",
-"un_def",
+char *type_print[100] =
+{
+    "if",
+    "else",
+    "while",
+    "string",
+    "iden",
+    "number",
+    "j: {",
+    "j: }",
+    "j: (",
+    "j: )",
+    "f: >",
+    "f: <",
+    "f: >=",
+    "f: <=",
+    "f: !=",
+    "j: ;",
+    "f: +",
+    "f: -",
+    "f: *",
+    "f: /",
+    "f: =",
+    "f: >=",
+    "f: <=",
+    "f: ==",
+    "j: ,",
+    "def",
+    "return",
+    "un_def",
 };
 
-struct tok_input{
-char *start;
-char *end;
-char *buf;
+struct tok_input
+{
+    char *start;
+    char *end;
+    char *buf;
 };
 
 //获取文件长度
@@ -85,13 +87,19 @@ char * file_into_string(FILE *fp)
 //判断字符是否是空白分隔符
 int is_white(char ch)
 {
-    if(ch=='\n' || ch=='\t' || ch== ' ' || ch=='\r'){return 1;}
-    else{return 0;}
+    if(ch=='\n' || ch=='\t' || ch== ' ' || ch=='\r')
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 //对比关键字
 int which_keywords(char *s)
 {
-         if(0==strcmp(s,"if")) return I_IF;
+    if(0==strcmp(s,"if")) return I_IF;
     else if(0==strcmp(s,"else")) return I_ELSE;
     else if(0==strcmp(s,"while")) return I_WHILE;
     else if(0==strcmp(s,"def")) return I_DEF;
@@ -129,7 +137,7 @@ long int get_next_token(char *s,struct token *t)
             s++;
             if(*(s++)=='/')
             {
-                for(;*s!='\n';s++)
+                for(; *s!='\n'; s++)
                 {
                     ;
                 }
@@ -137,9 +145,10 @@ long int get_next_token(char *s,struct token *t)
             }
             else if(*s=='*')
             {
-                for(++s;;++s)
+                for(++s;; ++s)
                 {
-                    if(*s=='*' && *(s+1)=='/'){
+                    if(*s=='*' && *(s+1)=='/')
+                    {
                         s=s+2;
                         break;
                     }
@@ -154,7 +163,7 @@ long int get_next_token(char *s,struct token *t)
         }
         else if(*s=='#')
         {
-            for(;*s!='\n';s++)
+            for(; *s!='\n'; s++)
             {
                 ;
             }
@@ -232,8 +241,12 @@ long int get_next_token(char *s,struct token *t)
         case '=':
             switch(*(s++))
             {
-                case '=':t->type=I_EQAUL_VAR;break;
-                default:t->type=I_EQAUL;s--;
+            case '=':
+                t->type=I_EQAUL_VAR;
+                break;
+            default:
+                t->type=I_EQAUL;
+                s--;
             }
             break;
         case '(':
@@ -251,36 +264,44 @@ long int get_next_token(char *s,struct token *t)
         case '<':
             switch(*(s++))
             {
-                case '=':t->type=I_LEFT_K_EQAUL;break;
-                default:t->type=I_LEFT_K;s--;
+            case '=':
+                t->type=I_LEFT_K_EQAUL;
+                break;
+            default:
+                t->type=I_LEFT_K;
+                s--;
             }
             break;
         case '>':
             switch(*(s++))
             {
-                case '=':t->type=I_RIGHT_K_EQAUL;break;
-                default:t->type=I_RIGHT_K;s--;
+            case '=':
+                t->type=I_RIGHT_K_EQAUL;
+                break;
+            default:
+                t->type=I_RIGHT_K;
+                s--;
             }
             break;
 
         case '"':
-            {
-                tok.start=s;
+        {
+            tok.start=s;
 
-                while(!(*s=='"'&& !(*(s-1)=='\\')) || *s=='\0')
-                {
-                    s++;
-                }
+            while(!(*s=='"'&& !(*(s-1)=='\\')) || *s=='\0')
+            {
                 s++;
-                int len_ch=s-tok.start;
-                char *tmp=malloc(sizeof(char)*(len_ch));
-                memcpy(tmp,tok.start,len_ch);
-                *(tmp+(s-tok.start)-1)='\0';
-                tok.buf=tmp;
-                t->type=I_STRING;
-                t->is=tmp;
-                break;
             }
+            s++;
+            int len_ch=s-tok.start;
+            char *tmp=malloc(sizeof(char)*(len_ch));
+            memcpy(tmp,tok.start,len_ch);
+            *(tmp+(s-tok.start)-1)='\0';
+            tok.buf=tmp;
+            t->type=I_STRING;
+            t->is=tmp;
+            break;
+        }
         case ',':
             t->type=I_COMMA;
             break;
@@ -288,7 +309,12 @@ long int get_next_token(char *s,struct token *t)
     }
     return s-s_start;
 }
-
+struct token *token_list_get(struct token_list *tl,int which,int excursion)
+{
+    struct token *tmp = tl->n+which < tl->max_len ? &tl->t[tl->n+which]:NULL;
+    if(excursion>=0)tl->n+=excursion;
+    return tmp;
+};
 int file_to_token_to_array(const char *file_name,struct token_list *tl)
 {
     FILE *so =fopen(file_name,"rb");
@@ -300,13 +326,15 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
         char *string_in = file_into_string(so);
         struct token tmp;
         int i;
-        for(i=0;;i++)
+        for(i=0;; i++)
         {
             int a=get_next_token(string_in,&tmp);
             string_in+=a;
             if(a==0)break;
-            else{
-                if(i>=init_len){
+            else
+            {
+                if(i>=init_len)
+                {
                     tl->t = (struct token *)realloc(tl->t,sizeof(struct token)*(i+1));
                 }
                 tl->t[i]=tmp;

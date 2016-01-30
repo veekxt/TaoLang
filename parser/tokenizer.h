@@ -34,17 +34,20 @@
 #define I_DEF 25
 #define I_RETURN 26
 #define I_UNDEF 27
-struct token{
-int type;
-char *is;
+struct token
+{
+    int type;
+    char *is;
 };
 
-struct token_list{
+struct token_list
+{
     int n;//note：int 是否合适？
     int max_len;
     struct token *t;
 };
 
 int file_to_token_to_array(const char *file_name,struct token_list *t);
-
+void print_token(struct token *t);
+struct token *token_list_get(struct token_list *,int,int);
 #endif // TOKENIZER_H_INCLUDED
