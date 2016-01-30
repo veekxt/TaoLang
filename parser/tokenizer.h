@@ -46,7 +46,7 @@ struct token_list
     int max_len;
     struct token *t;
 };
-
+extern char *type_print[100];
 int file_to_token_to_array(const char *file_name,struct token_list *t);
 void print_token(struct token *t);
 struct token *token_list_get(struct token_list *,int,int);

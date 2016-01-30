@@ -10,7 +10,7 @@ struct XTtree *init_XTtree(int n)
     t =(struct XTtree *)malloc(sizeof(struct XTtree));
     if(n==0)t->child=NULL;
     else t->child=(struct XTtree **)malloc(sizeof(struct XTtree *)*n);
-    t->token_is="XTNULL";
+    t->token_is="";
     t->token_type=I_UNDEF;
     for(int i=0; i<n; i++)
     {
@@ -24,10 +24,11 @@ void print_XTtree(struct XTtree *t)
 {
     //输出一棵树，格式为
     //根（子节点1，子节点2）
+    //例子 1/23-(1+90) ==> -(/(1,23),+(1,90))
     if(t==NULL)return;
     if(strlen(t->token_is)==0)
     {
-        printf("#%d#",t->token_type);
+        printf("%s",type_print[t->token_type]+3);
     }
     else
     {
@@ -47,37 +48,35 @@ void print_XTtree(struct XTtree *t)
     }
 
 }
-
-
+//
 struct XTtree * do_exp_exp(struct token_list *tl)
 {
-    printf("%s\n",tl->t->is);
-    //struct token *a_token = token_list_get(tl,0,1);
-    struct token *a_token_2 = token_list_get(tl,1,0);
-    if( a_token_2 !=NULL &&
-        (a_token_2->type==I_ADD
+    struct XTtree *start = do_exp_num(tl);
+    struct XTtree *tmp_root=start;
+    while(1)
+    {
+        struct token *a_token_2 = token_list_get(tl,0,1);
+        if(a_token_2!=NULL &&
+         (a_token_2->type==I_ADD
         || a_token_2->type==I_REDUCE
         || a_token_2->type==I_MULTIPLY
         || a_token_2->type==I_DIVIDE
-        )
-       )
-    {
-        struct XTtree *start_tree=init_XTtree(2);
-        start_tree->token_type=a_token_2->type;
-        start_tree->token_is=a_token_2->is;
-        start_tree->child[0] = do_exp_num(tl);
-        printf("left-ok\n");
-        tl->n+=1;
-        printf("###%s###\n",token_list_get(tl,0,0)->is);
-        start_tree->child[1] = do_exp_exp(tl);
-        printf("right-ok\n");
-        return start_tree;
+        ))
+        {
+            struct XTtree *now_tree=init_XTtree(2);
+            now_tree->token_type=a_token_2->type;
+            //now_tree->token_is="";
+            now_tree->child[0]=tmp_root;
+            now_tree->child[1]=do_exp_num(tl);
+            tmp_root=now_tree;
+        }
+        else
+        {
+            break;
+        }
     }
-    else{
-        return do_exp_num(tl);
-    }
-
-}
+    return tmp_root;
+};
 
 struct XTtree * do_exp_num(struct token_list *tl)
 {
@@ -95,7 +94,7 @@ struct XTtree * do_exp_num(struct token_list *tl)
     case I_LEFT_SMALLQ:
         {
             struct XTtree *tmp = do_exp_exp(tl);
-            token_list_get(tl,0,1);///match ")"
+            //token_list_get(tl,0,1);///match ")"
             return tmp;
         }
         break;
@@ -103,59 +102,80 @@ struct XTtree * do_exp_num(struct token_list *tl)
     }
 }
 
-struct XTtree * do_exp_old(struct token_list *tl)
-//已弃用，无法处理括号
+/***
+
+右结合，无优先级
+
+S ::= fac
+S ::= fac OP S
+fac ::= NUM | '(' S ')'
+NUM ::= 数字
+OP ::= 加减乘除
+
+//S
+struct XTtree * do_exp_exp(struct token_list *tl)
 {
-    struct XTtree *exp_tree=init_XTtree(2);
-    struct token a_token=tl->t[tl->n];
-    if(a_token.type==I_LEFT_SMALLQ)
+    struct XTtree *start = do_exp_num(tl);
+    struct token *a_token_2 = token_list_get(tl,0,1);
+    if( a_token_2 !=NULL &&
+        (a_token_2->type==I_ADD
+        || a_token_2->type==I_REDUCE
+        || a_token_2->type==I_MULTIPLY
+        || a_token_2->type==I_DIVIDE
+        )
+       )
     {
-        /*
-        tl->n++;
-        struct XTtree *tmp = do_exp(tl);
-        if(tl->t[tl->n++].type==I_RIGHT_SMALLQ)
-        {
-            return tmp;
-        }
-        */
+        struct XTtree *start_tree=init_XTtree(2);
+        start_tree->token_type=a_token_2->type;
+        start_tree->token_is=a_token_2->is;
+        start_tree->child[0] = start;
+        start_tree->child[1] = do_exp_exp(tl);
+        return start_tree;
     }
-    else if(a_token.type==I_NUMBER)
-    {
-        if(tl->t[tl->n+1].type==I_ADD || tl->t[tl->n+1].type==I_REDUCE || tl->t[tl->n+1].type==I_MULTIPLY || tl->t[tl->n+1].type==I_DIVIDE)
-        {
-            struct XTtree *l=init_XTtree(2);
-            l->token_type=I_NUMBER;
-            l->token_is=a_token.is;
-            exp_tree->token_type=tl->t[tl->n+1].type;
-            exp_tree->token_is=tl->t[tl->n+1].is;
-            exp_tree->child[0]=l;
-            //printf("%d\n",tl->t[tl->n+1].type);
-            tl->n+=2;
-            exp_tree->child[1]=do_exp_old(tl);
-            return exp_tree;
-        }
-        else
-        {
-            tl->n+=1;
-            exp_tree->token_type=I_NUMBER;
-            exp_tree->token_is=a_token.is;
-            //note : free child
-            return exp_tree;
-        }
+    else{
+        return start;
     }
-    return exp_tree;
+
 }
 
+//fac
+struct XTtree * do_exp_num(struct token_list *tl)
+{
+    struct token *a_token = token_list_get(tl,0,1);
+    switch(a_token->type)
+    {
+    case I_NUMBER:
+        {
+            struct XTtree *exp_tree=init_XTtree(0);
+            exp_tree->token_type=I_NUMBER;
+            exp_tree->token_is=a_token->is;
+            return exp_tree;
+        }
+        break;
+    case I_LEFT_SMALLQ:
+        {
+            struct XTtree *tmp = do_exp_exp(tl);
+            //token_list_get(tl,0,1);///match ")"
+            return tmp;
+        }
+        break;
+    default:;
+    }
+}
+
+******/
 int main(void)
 {
     struct token_list tl;
     file_to_token_to_array("tmp2.xt",&tl);
+    puts("Token Stream:");
     for(int i=0; i<tl.max_len; i++)
     {
         print_token(&tl.t[i]);
     }
     struct XTtree *s=do_exp_exp(&tl);
+    puts("Tree:");
     print_XTtree(s);
-    //printf("%d-%p",s->child_num,s->child);
+    getchar();
     return 0;
 }

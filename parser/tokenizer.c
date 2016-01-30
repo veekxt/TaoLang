@@ -134,8 +134,7 @@ long int get_next_token(char *s,struct token *t)
         }
         if(*s=='/')
         {
-            s++;
-            if(*(s++)=='/')
+            if(*(++s)=='/')
             {
                 for(; *s!='\n'; s++)
                 {
