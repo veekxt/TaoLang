@@ -102,68 +102,6 @@ struct XTtree * do_exp_num(struct token_list *tl)
     }
 }
 
-/***
-
-右结合，无优先级
-
-S ::= fac
-S ::= fac OP S
-fac ::= NUM | '(' S ')'
-NUM ::= 数字
-OP ::= 加减乘除
-
-//S
-struct XTtree * do_exp_exp(struct token_list *tl)
-{
-    struct XTtree *start = do_exp_num(tl);
-    struct token *a_token_2 = token_list_get(tl,0,1);
-    if( a_token_2 !=NULL &&
-        (a_token_2->type==I_ADD
-        || a_token_2->type==I_REDUCE
-        || a_token_2->type==I_MULTIPLY
-        || a_token_2->type==I_DIVIDE
-        )
-       )
-    {
-        struct XTtree *start_tree=init_XTtree(2);
-        start_tree->token_type=a_token_2->type;
-        start_tree->token_is=a_token_2->is;
-        start_tree->child[0] = start;
-        start_tree->child[1] = do_exp_exp(tl);
-        return start_tree;
-    }
-    else{
-        return start;
-    }
-
-}
-
-//fac
-struct XTtree * do_exp_num(struct token_list *tl)
-{
-    struct token *a_token = token_list_get(tl,0,1);
-    switch(a_token->type)
-    {
-    case I_NUMBER:
-        {
-            struct XTtree *exp_tree=init_XTtree(0);
-            exp_tree->token_type=I_NUMBER;
-            exp_tree->token_is=a_token->is;
-            return exp_tree;
-        }
-        break;
-    case I_LEFT_SMALLQ:
-        {
-            struct XTtree *tmp = do_exp_exp(tl);
-            //token_list_get(tl,0,1);///match ")"
-            return tmp;
-        }
-        break;
-    default:;
-    }
-}
-
-******/
 int main(void)
 {
     struct token_list tl;
