@@ -223,7 +223,7 @@ long int get_next_token(char *s,struct token *t)
         switch(*(s++))
         {
         case ';':
-            t->type=I_END_LINE;
+            t->type=I_END_LINE_F;
             break;
         case '+':
             t->type=I_ADD;

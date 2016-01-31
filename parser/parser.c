@@ -5,6 +5,16 @@
 #include "parser.h"
 #include "../datastr/list.h"
 
+char *lang_node_type_comment[]={
+"stmt",
+"exp",
+"number",
+"+",
+"-",
+"*",
+"/",
+};
+
 struct XTtree *init_XTtree(int n)
 {
     struct XTtree *t;
@@ -40,7 +50,7 @@ void print_XTtree(struct XTtree *t)
     {
         printf("(");
         print_XTtree(XTlist_get(t->child,0,struct XTtree *));
-        for(int i=1;i<t->child_num;i++)
+        for(int i=1;i<t->child->len;i++)
         {
             printf(",");
             print_XTtree(XTlist_get(t->child,i,struct XTtree *));
@@ -94,6 +104,7 @@ struct XTtree * do_exp_exp(struct token_list *tl)
 struct XTtree * do_exp_num(struct token_list *tl)
 {
     struct token *a_token = token_list_get(tl,0,0);
+    //判断a_token
     switch(a_token->type)
     {
     case I_NUMBER:
@@ -118,6 +129,56 @@ struct XTtree * do_exp_num(struct token_list *tl)
     return NULL;
 }
 
+struct XTtree * do_stmt(struct token_list *tl)
+{
+    struct XTtree * start = do_stmt_specific(tl);
+    struct XTtree * root = init_XTtree(0);
+    XTlist_add(root->child,struct XTtree *,start);
+    root->token_is="stmt";
+    root->token_type=0;
+    //root->child=init_XTlist(n,sizeof(struct XTtree *));
+    while(1)
+    {
+        struct token *a_token_2 = token_list_get(tl,0,0);
+        if(a_token_2==NULL)return root;
+        switch(a_token_2->type)
+        {
+        case I_END_LINE_F:
+            tl->n++;
+            start=do_stmt_specific(tl);
+            XTlist_add(root->child,struct XTtree *,start);
+            break;
+        default:goto end;break;
+        }
+    }
+    end:return root;
+}
+
+struct XTtree * do_stmt_specific(struct token_list *tl)
+{
+    struct token *a_token_2 = token_list_get(tl,0,0);
+    if(a_token_2==NULL)return NULL;
+    switch(a_token_2->type)
+    {
+        case I_NUMBER:
+            {
+                struct XTtree *tmp=do_exp_exp(tl);
+                return tmp;
+            }
+            break;
+        case I_LEFT_BIGQ:
+            {
+                tl->n++;
+                return do_stmt(tl);
+                tl->n++;
+            }
+            break;
+        default:
+            return NULL;
+            break;
+    }
+}
+
 int main(void)
 {
     struct token_list tl;
@@ -127,7 +188,8 @@ int main(void)
     {
         print_token(&tl.t[i]);
     }
-    struct XTtree *s=do_exp_exp(&tl);
+    //struct XTtree *s=do_exp_exp(&tl);
+    struct XTtree *s=do_stmt(&tl);
     puts("Tree:");
     print_XTtree(s);
     getchar();

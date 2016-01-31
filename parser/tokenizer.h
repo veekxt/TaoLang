@@ -21,7 +21,7 @@
 #define I_BIGER_EQAUL 12
 #define I_SMALLER_EQAUL 13
 #define I_NOT_EQAUL 14
-#define I_END_LINE 15
+#define I_END_LINE_F 15
 #define I_ADD 16
 #define I_REDUCE 17
 #define I_MULTIPLY 18
