@@ -22,7 +22,7 @@ struct XTtree *init_XTtree(int n)
     t->child=init_XTlist(n,sizeof(struct XTtree *));
     for(int i=0;i<n;i++)
     {
-        XTlist_add(t->child,struct XTtree *,NULL);
+        //XTlist_add(t->child,struct XTtree *,NULL);
         //XTlist_assign(t,i,struct XTtree *,NULL);
     }
     t->token_is="";
@@ -31,6 +31,31 @@ struct XTtree *init_XTtree(int n)
     return t;
 }
 
+//可视化的树状显示
+void print_XTtree_V(struct XTtree *t,int where_i)
+{
+    if(t==NULL)return;
+    if(strlen(t->token_is)==0)
+    {
+        printf("%s",type_print[t->token_type]+3);
+    }
+    else
+    {
+        printf(t->token_is);
+    }
+    if(t->child->data!=NULL)
+    {
+        for(int i=0;i<t->child->len;i++)
+        {
+            printf("\n");
+            for(int i=0;i<=where_i;i++)
+            {
+                printf("  ");
+            }
+            print_XTtree_V(XTlist_get(t->child,i,struct XTtree *),where_i+1);
+        }
+    }
+}
 void print_XTtree(struct XTtree *t)
 {
     //输出一棵树，格式为
@@ -87,8 +112,8 @@ struct XTtree * do_exp_exp(struct token_list *tl)
             tl->n++;//match "+ - / *"
             struct XTtree *now_tree=init_XTtree(2);
             now_tree->token_type=a_token_2->type;
-            XTlist_assign(now_tree->child,0,struct XTtree *,tmp_root);
-            XTlist_assign(now_tree->child,1,struct XTtree *,do_exp_num(tl));
+            XTlist_add(now_tree->child,struct XTtree *,tmp_root);
+            XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
            // now_tree->child[0]=tmp_root;
            // now_tree->child[1]=do_exp_num(tl);
             tmp_root=now_tree;
@@ -128,6 +153,19 @@ struct XTtree * do_exp_num(struct token_list *tl)
     }
     return NULL;
 }
+
+struct XTtree * do_while(struct token_list *tl)
+{
+    struct XTtree * root = init_XTtree(2);
+    root->token_type=I_WHILE;
+    root->token_is="while";
+    tl->n+=1;
+    struct XTtree * while_exp=do_exp_exp(tl);
+    XTlist_add(root->child,struct XTtree *,while_exp);
+    //tl->n+=1;
+    XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
+    return root;
+};
 
 struct XTtree * do_stmt(struct token_list *tl)
 {
@@ -169,8 +207,14 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
         case I_LEFT_BIGQ:
             {
                 tl->n++;
-                return do_stmt(tl);
+                struct XTtree *tmp=do_stmt(tl);
                 tl->n++;
+                return tmp;
+            }
+            break;
+        case I_WHILE:
+            {
+                return do_while(tl);
             }
             break;
         default:
@@ -191,7 +235,6 @@ int main(void)
     //struct XTtree *s=do_exp_exp(&tl);
     struct XTtree *s=do_stmt(&tl);
     puts("Tree:");
-    print_XTtree(s);
-    getchar();
+    print_XTtree_V(s,0);
     return 0;
 }

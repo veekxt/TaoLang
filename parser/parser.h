@@ -25,4 +25,6 @@ struct XTtree
 struct XTtree * do_exp_num(struct token_list *tl);
 struct XTtree * do_exp_exp(struct token_list *tl);
 struct XTtree * do_stmt_specific(struct token_list *tl);
+struct XTtree * do_stmt(struct token_list *tl);
+struct XTtree * do_while(struct token_list *tl);
 #endif // PARSER_H_INCLUDED
