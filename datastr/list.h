@@ -16,8 +16,8 @@ void *data;//存放具体对象指针的数组
 
 #define XTlist_assign(XTlist,n,type,dat)\
     {\
-        type *tmp=(((type *)(XTlist)->data)+(n));\
-        *(tmp) = (dat);\
+        type *not_use_tmp=(((type *)(XTlist)->data)+(n));\
+        *(not_use_tmp) = (dat);\
     }
 #define XTlist_add(l,type,dat)\
     {\
@@ -27,8 +27,8 @@ void *data;//存放具体对象指针的数组
             l->max_len+=100;\
         }\
         else ; \
-        type *tmp=(((type *)l->data)+l->len);\
-        *(tmp)=(dat);\
+        type *not_use_tmp=(((type *)l->data)+l->len);\
+        *(not_use_tmp)=(dat);\
         l->len++;\
     }
 XTlist * init_XTlist(int len,int data_len);

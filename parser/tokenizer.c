@@ -311,7 +311,11 @@ long int get_next_token(char *s,struct token *t)
 struct token *token_list_get(struct token_list *tl,int which,int excursion)
 {
     struct token *tmp = tl->n+which < tl->max_len ? &tl->t[tl->n+which]:NULL;
-    if(excursion>=0)tl->n+=excursion;
+    if(excursion>=0)
+    {
+        tl->n+=excursion;
+        //printf(" /t:%d/ ",tl->n);
+    }
     return tmp;
 };
 int file_to_token_to_array(const char *file_name,struct token_list *tl)
