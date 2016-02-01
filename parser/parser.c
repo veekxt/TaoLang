@@ -3,6 +3,7 @@
 #include <string.h>
 #include "tokenizer.h"
 #include "parser.h"
+#include "tools.h"
 #include "../datastr/list.h"
 
 char *lang_node_type_comment[]={
@@ -76,6 +77,23 @@ void print_XTtree(struct XTtree *t)
             print_XTtree(XTlist_get(t->child,i,struct XTtree *));
         }
         printf(")");
+    }
+
+}
+
+struct XTtree * do_all_exp(struct token_list *tl)
+{
+    int tmp_n=tl->n;
+    struct XTtree *tmp_tree = do_exp_exp(tl);
+    struct token *a_token = token_list_get(tl,0,0);
+    if(a_token!=NULL && is_relation_sign(a_token->type))
+    {
+        tl->n=tmp_n;
+        free(tmp_tree);
+        return do_bool_exp(tl);
+    }else
+    {
+        return tmp_tree;//or tl->n=tmp_n; free(tmp_tree); do_exp_exp(tl);
     }
 
 }
@@ -169,17 +187,16 @@ struct XTtree * do_function(struct token_list *tl)
     tl->n++;//match "("
     //匹配参数列表
     struct token *a_token_2 = token_list_get(tl,0,0);
-    struct token *a_token_3 = token_list_get(tl,1,0);
     if(a_token_2!=NULL && a_token_2->type!=I_RIGHT_SMALLQ)
     {
-        XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
+        XTlist_add(root_tree->child,struct XTtree *,do_all_exp(tl));
     }
     a_token_2 = token_list_get(tl,0,0);
    //printf("=%s=2",a_token_2->is);
     while(a_token_2!=NULL && a_token_2->type==I_COMMA)
     {
         tl->n++;//match ","
-        XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
+        XTlist_add(root_tree->child,struct XTtree *,do_all_exp(tl));
         a_token_2 = token_list_get(tl,0,0);
        // printf("=%d=",a_token_2->type);
     }
@@ -189,7 +206,7 @@ struct XTtree * do_function(struct token_list *tl)
 };
 
 struct XTtree * do_exp_num(struct token_list *tl)
-{
+ {
     struct token *a_token = token_list_get(tl,0,0);
     //判断a_token
     switch(a_token->type)
@@ -235,6 +252,7 @@ struct XTtree * do_exp_num(struct token_list *tl)
     }
     return NULL;
 }
+
 
 struct XTtree * do_while(struct token_list *tl)
 {
