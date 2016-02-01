@@ -23,12 +23,14 @@ c=8;
 if(b==c)
 {
 print(b);
-};
+};;;;
 else{
+
 if(a<b)
 {
 print(slide);
 };
+
 print(a);
 };
 while(1>9)

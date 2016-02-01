@@ -11,19 +11,27 @@ FUNCTION_EXP,
 NUM_EXP,
 BOOL_EXP,
 NUMBER,
+IDEN,
 OP_ADD,
 OP_REDUCE,
 OP_MULTIPLY,
 OP_DIVIDE,
+SMALLER_COM,
+BIGGER_COM,
+SMALLER_COM_EQ,
+BIGER_COM_EQ,
+EQAUL,
+UNKNOWN,
 };
 
 struct XTtree
 {
-    int token_type;
-    enum parser_node_type node_type;
-    char *token_is;
+    //int token_type;
+    enum parser_node_type parser_type;
+    //char *token_is;
     XTlist *child;
-    int child_num;
+    char *content;
+    //int child_num;
 };
 
 struct XTtree *init_XTtree(int n);

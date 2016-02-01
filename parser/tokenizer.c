@@ -330,6 +330,7 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
         tl->t=(struct token *)malloc(sizeof(struct token)*init_len);
         char *string_in = file_into_string(so);
         struct token tmp;
+        struct token tmp_pre;
         int i;
         for(i=0;; i++)
         {
@@ -338,12 +339,19 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
             if(a==0)break;
             else
             {
+                if(i>0)
+                {
+                    if(tmp.type==I_END_LINE_F && tl->t[i-1].type==I_END_LINE_F)
+                    {
+                        i--;
+                        continue;
+                    }
+                }
                 if(i>=init_len)
                 {
                     tl->t = (struct token *)realloc(tl->t,sizeof(struct token)*(i+1));
                 }
                 tl->t[i]=tmp;
-
             }
         }
         tl->max_len=i;
