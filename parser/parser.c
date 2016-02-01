@@ -99,14 +99,19 @@ struct XTtree * do_bool_exp(struct token_list *tl)
     case I_RIGHT_K:
         tmp_root->token_type=a_token->type;
         break;
+    case I_SMALLER_EQAUL:
+        tmp_root->token_type=a_token->type;
+        break;
+    case I_BIGER_EQAUL:
+        tmp_root->token_type=a_token->type;
+        break;
+    default:break;
     }
-    tl->n++;
-    printf("+%s+",tl->t[tl->n].is);
+    tl->n++;//match > < >= <=
     XTlist_add(tmp_root->child,struct XTtree *,do_exp_exp(tl));
     return tmp_root;
 
 };
-
 /**
 
 //简单四则运算的parser测试
@@ -116,7 +121,7 @@ fac -> num | (S)
 
 fac和do_exp_num对应
 S和do_exp_exp对应
-
+printf("=%d=",a_token_2->type);
 */
 struct XTtree * do_exp_exp(struct token_list *tl)
 {
@@ -154,6 +159,34 @@ struct XTtree * do_exp_exp(struct token_list *tl)
     return tmp_root;
 };
 
+struct XTtree * do_function(struct token_list *tl)
+{
+    struct token *a_token = token_list_get(tl,0,0);
+    struct XTtree *root_tree=init_XTtree(0);
+    root_tree->token_type=T_FUN;
+    root_tree->token_is=a_token->is;
+    tl->n++;//match function
+    tl->n++;//match "("
+    //匹配参数列表
+    struct token *a_token_2 = token_list_get(tl,1,0);
+    if(a_token_2!=NULL && a_token_2->type!=I_RIGHT_SMALLQ)
+    {
+        XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
+    }
+    a_token_2 = token_list_get(tl,0,0);
+    printf("=%s=2",a_token_2->is);
+    while(a_token_2!=NULL && a_token_2->type==I_COMMA)
+    {
+        tl->n++;//match ","
+        XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
+        a_token_2 = token_list_get(tl,0,0);
+        printf("=%d=",a_token_2->type);
+    }
+    tl->n++;//match ")"
+    return root_tree;
+
+};
+
 struct XTtree * do_exp_num(struct token_list *tl)
 {
     struct token *a_token = token_list_get(tl,0,0);
@@ -179,6 +212,23 @@ struct XTtree * do_exp_num(struct token_list *tl)
             //puts("ww");
             return tmp;
         }
+    case I_IDEN:
+        {
+            struct token *a_token_next = token_list_get(tl,1,0);
+            if(a_token_next!=NULL && a_token_next->type==I_LEFT_SMALLQ)
+            {
+                return do_function(tl);
+            }
+            else
+            {
+                tl->n++;//match iden
+                struct XTtree *exp_tree=init_XTtree(0);
+                exp_tree->token_type=I_IDEN;
+                exp_tree->token_is=a_token->is;
+                //printf("-%d-",tl->t[tl->n].type);
+                return exp_tree;
+            }
+        }
         break;
     default:;
     }
@@ -195,7 +245,7 @@ struct XTtree * do_while(struct token_list *tl)
     struct XTtree * while_exp=do_bool_exp(tl);
     XTlist_add(root->child,struct XTtree *,while_exp);
     tl->n+=1;
-    printf("/%d/ ",tl->t[tl->n].type);
+   // printf("/%d/ ",tl->t[tl->n].type);
     XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
     return root;
 };
@@ -231,6 +281,12 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
     switch(a_token_2->type)
     {
         case I_NUMBER:
+            {
+                struct XTtree *tmp=do_exp_exp(tl);
+                return tmp;
+            }
+            break;
+        case I_IDEN:
             {
                 struct XTtree *tmp=do_exp_exp(tl);
                 return tmp;

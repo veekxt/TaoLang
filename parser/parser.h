@@ -30,4 +30,5 @@ struct XTtree * do_exp_exp(struct token_list *tl);//表达式的下一个字符
 struct XTtree * do_stmt_specific(struct token_list *tl);//
 struct XTtree * do_stmt(struct token_list *tl);
 struct XTtree * do_while(struct token_list *tl);
+struct XTtree * do_function(struct token_list *tl);
 #endif // PARSER_H_INCLUDED

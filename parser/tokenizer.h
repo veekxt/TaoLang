@@ -34,6 +34,8 @@
 #define I_DEF 25
 #define I_RETURN 26
 #define I_UNDEF 27
+#define T_FUN 28
+
 struct token
 {
     int type;
