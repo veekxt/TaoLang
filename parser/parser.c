@@ -168,19 +168,20 @@ struct XTtree * do_function(struct token_list *tl)
     tl->n++;//match function
     tl->n++;//match "("
     //匹配参数列表
-    struct token *a_token_2 = token_list_get(tl,1,0);
+    struct token *a_token_2 = token_list_get(tl,0,0);
+    struct token *a_token_3 = token_list_get(tl,1,0);
     if(a_token_2!=NULL && a_token_2->type!=I_RIGHT_SMALLQ)
     {
         XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
     }
     a_token_2 = token_list_get(tl,0,0);
-    printf("=%s=2",a_token_2->is);
+   //printf("=%s=2",a_token_2->is);
     while(a_token_2!=NULL && a_token_2->type==I_COMMA)
     {
         tl->n++;//match ","
         XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
         a_token_2 = token_list_get(tl,0,0);
-        printf("=%d=",a_token_2->type);
+       // printf("=%d=",a_token_2->type);
     }
     tl->n++;//match ")"
     return root_tree;
