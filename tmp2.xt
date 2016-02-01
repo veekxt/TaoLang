@@ -15,3 +15,4 @@ while(4 > 2)
 };
 45+(2-4);
 print(heheh,45 > 5,3-1+(s-9));
+print(add(a+b,c-(1-d)),MULN(MUL(2)));
