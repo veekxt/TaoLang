@@ -33,5 +33,7 @@ struct XTtree * do_while(struct token_list *tl);
 struct XTtree * do_function(struct token_list *tl);
 struct XTtree * do_all_exp(struct token_list *tl);
 struct XTtree * do_bool_exp(struct token_list *tl);
+struct XTtree * do_assign_stmt(struct token_list *tl);
+struct XTtree * do_if(struct token_list *tl);
 
 #endif // PARSER_H_INCLUDED

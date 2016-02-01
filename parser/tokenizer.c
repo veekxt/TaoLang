@@ -243,6 +243,7 @@ long int get_next_token(char *s,struct token *t)
             {
             case '=':
                 t->type=I_EQAUL_VAR;
+                t->is="==";
                 break;
             default:
                 t->type=I_EQAUL;

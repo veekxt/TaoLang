@@ -27,7 +27,15 @@ struct XTtree *init_XTtree(int n)
     return t;
 }
 
-//可视化的树状显示
+//可视化的树状显示,横向
+/**
+例子
+a-b =>
+-
+  a
+  b
+
+*/
 void print_XTtree_V(struct XTtree *t,int where_i)
 {
     if(t==NULL)return;
@@ -60,7 +68,7 @@ void print_XTtree(struct XTtree *t)
     if(t==NULL)return;
     if(strlen(t->token_is)==0)
     {
-        printf("%s",type_print[t->token_type]+3);
+        printf("%s",type_print[t->token_type]);
     }
     else
     {
@@ -80,7 +88,17 @@ void print_XTtree(struct XTtree *t)
     }
 
 }
-
+struct XTtree * do_assign_stmt(struct token_list *tl)
+{
+    struct XTtree *root_tree = init_XTtree(0);
+    root_tree->token_type=I_EQAUL;
+    root_tree->token_is="=";
+    XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
+    //tl->n++;
+    tl->n++;
+    XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
+    return root_tree;
+};
 struct XTtree * do_all_exp(struct token_list *tl)
 {
     int tmp_n=tl->n;
@@ -95,8 +113,8 @@ struct XTtree * do_all_exp(struct token_list *tl)
     {
         return tmp_tree;//or tl->n=tmp_n; free(tmp_tree); do_exp_exp(tl);
     }
-
 }
+
 //布尔表达式
 struct XTtree * do_bool_exp(struct token_list *tl)
 {
@@ -107,25 +125,13 @@ struct XTtree * do_bool_exp(struct token_list *tl)
     XTlist_add(tmp_root->child,struct XTtree *,tmp);
     struct token *a_token = token_list_get(tl,0,0);
    // printf("#%s-%p#",a_token->is,tmp);
-    //printf("+%d+",tl->t[tl->n].type);
+    printf("+%d+",tl->t[tl->n].type);
 
-    switch(a_token->type)
+    if(is_relation_sign(a_token->type))
     {
-    case I_LEFT_K:
         tmp_root->token_type=a_token->type;
-        break;
-    case I_RIGHT_K:
-        tmp_root->token_type=a_token->type;
-        break;
-    case I_SMALLER_EQAUL:
-        tmp_root->token_type=a_token->type;
-        break;
-    case I_BIGER_EQAUL:
-        tmp_root->token_type=a_token->type;
-        break;
-    default:break;
     }
-    tl->n++;//match > < >= <=
+    tl->n++;//match > < >= <= ==
     XTlist_add(tmp_root->child,struct XTtree *,do_exp_exp(tl));
     return tmp_root;
 
@@ -254,6 +260,21 @@ struct XTtree * do_exp_num(struct token_list *tl)
 }
 
 
+struct XTtree * do_if(struct token_list *tl)
+{
+    struct XTtree * root = init_XTtree(2);
+    root->token_type=I_IF;
+    root->token_is="if";
+    tl->n+=1;
+    tl->n+=1;
+    struct XTtree * while_exp=do_bool_exp(tl);
+    XTlist_add(root->child,struct XTtree *,while_exp);
+    tl->n+=1;
+   // printf("/%d/ ",tl->t[tl->n].type);
+    XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
+    return root;
+};
+
 struct XTtree * do_while(struct token_list *tl)
 {
     struct XTtree * root = init_XTtree(2);
@@ -296,6 +317,7 @@ struct XTtree * do_stmt(struct token_list *tl)
 struct XTtree * do_stmt_specific(struct token_list *tl)
 {
     struct token *a_token_2 = token_list_get(tl,0,0);
+    struct token *next_token = token_list_get(tl,1,0);
     if(a_token_2==NULL)return NULL;
     switch(a_token_2->type)
     {
@@ -307,7 +329,15 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
             break;
         case I_IDEN:
             {
-                struct XTtree *tmp=do_exp_exp(tl);
+                struct XTtree *tmp=NULL;
+                switch(next_token->type)
+                {
+                case I_EQAUL:
+                    tmp=do_assign_stmt(tl);
+                    return tmp;
+                    break;
+                }
+                tmp=do_exp_exp(tl);
                 return tmp;
             }
             break;
@@ -322,6 +352,11 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
         case I_WHILE:
             {
                 return do_while(tl);
+            }
+            break;
+        case I_IF:
+            {
+                return do_if(tl);
             }
             break;
         default:

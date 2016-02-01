@@ -1,3 +1,4 @@
+//todo:赋值语句，if-else语句
 we+8-ksdf(2-8,3/4,4);
 7+0;
 {
@@ -16,3 +17,10 @@ while(4 > 2)
 45+(2-4);
 print(heheh,45 > 5,3-1+(s-9));
 print(add(a+b,c-(1-d)),MULN(MUL(2)));
+a=b;
+b=9;
+c=8;
+if(b==c)
+{
+print(b);
+};
