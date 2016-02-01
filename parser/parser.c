@@ -125,7 +125,7 @@ struct XTtree * do_bool_exp(struct token_list *tl)
     XTlist_add(tmp_root->child,struct XTtree *,tmp);
     struct token *a_token = token_list_get(tl,0,0);
    // printf("#%s-%p#",a_token->is,tmp);
-    printf("+%d+",tl->t[tl->n].type);
+    //printf("+%d+",tl->t[tl->n].type);
 
     if(is_relation_sign(a_token->type))
     {
@@ -272,6 +272,17 @@ struct XTtree * do_if(struct token_list *tl)
     tl->n+=1;
    // printf("/%d/ ",tl->t[tl->n].type);
     XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
+
+    struct token *a_token = token_list_get(tl,1,0);
+    printf("/%s/ ",a_token->is);
+    if(a_token!=NULL && a_token->type==I_ELSE)
+    {
+        //printf("/%d/ ",tl->t[tl->n].type);
+        tl->n+=2;//match ";"&&"else"
+       // printf("#%d# ",tl->t[tl->n].type);
+        XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
+    }
+
     return root;
 };
 
