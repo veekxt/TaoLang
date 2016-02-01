@@ -2,20 +2,25 @@
 #define PARSER_H_INCLUDED
 #include "../datastr/list.h"
 
-typedef enum lang_node_type{
+enum parser_node_type{
 STMT,
-EXP,
+IF_STMT,
+WHILE_STMT,
+ASSIGN_STMT,
+FUNCTION_EXP,
+NUM_EXP,
+BOOL_EXP,
 NUMBER,
 OP_ADD,
 OP_REDUCE,
 OP_MULTIPLY,
 OP_DIVIDE,
-}lang_node_type;
+};
 
 struct XTtree
 {
     int token_type;
-    lang_node_type node_type;
+    enum parser_node_type node_type;
     char *token_is;
     XTlist *child;
     int child_num;

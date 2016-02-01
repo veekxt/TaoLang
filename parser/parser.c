@@ -6,9 +6,14 @@
 #include "tools.h"
 #include "../datastr/list.h"
 
-char *lang_node_type_comment[]={
+char *parser_node_type_comment[]={
 "stmt",
-"exp",
+"if-stmt",
+"while-stmt",
+"assign-stmt",
+"func-exp",
+"num-exp",
+"bool-exp",
 "number",
 "+",
 "-",
@@ -94,7 +99,6 @@ struct XTtree * do_assign_stmt(struct token_list *tl)
     root_tree->token_type=I_EQAUL;
     root_tree->token_is="=";
     XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
-    //tl->n++;
     tl->n++;
     XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
     return root_tree;
@@ -119,13 +123,10 @@ struct XTtree * do_all_exp(struct token_list *tl)
 struct XTtree * do_bool_exp(struct token_list *tl)
 {
     struct XTtree *tmp_root=init_XTtree(2);
-    //printf("#%s#",token_list_get(tl,0,0)->is);
     struct XTtree *tmp=do_exp_exp(tl);
 
     XTlist_add(tmp_root->child,struct XTtree *,tmp);
     struct token *a_token = token_list_get(tl,0,0);
-   // printf("#%s-%p#",a_token->is,tmp);
-    //printf("+%d+",tl->t[tl->n].type);
 
     if(is_relation_sign(a_token->type))
     {
@@ -154,7 +155,6 @@ struct XTtree * do_exp_exp(struct token_list *tl)
     while(1)//注意这里不知道{ op S}的重复次数
     {
         struct token *a_token_2 = token_list_get(tl,0,0);
-        //printf("/t:w:%d/",tl->n);
         if(a_token_2!=NULL &&
          (a_token_2->type==I_ADD
         || a_token_2->type==I_REDUCE
@@ -162,24 +162,18 @@ struct XTtree * do_exp_exp(struct token_list *tl)
         || a_token_2->type==I_DIVIDE
         ))
         {
-           // puts("??");
             tl->n++;//match "+ - / *"
-         //   puts("n++");
             struct XTtree *now_tree=init_XTtree(2);
             now_tree->token_type=a_token_2->type;
             XTlist_add(now_tree->child,struct XTtree *,tmp_root);
             XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
-           // now_tree->child[0]=tmp_root;
-           // now_tree->child[1]=do_exp_num(tl);
             tmp_root=now_tree;
         }
         else
         {
-            //tl->n++;
             break;
         }
     }
-    //printf("/t:w:%d/",tl->n);
     return tmp_root;
 };
 
@@ -198,13 +192,11 @@ struct XTtree * do_function(struct token_list *tl)
         XTlist_add(root_tree->child,struct XTtree *,do_all_exp(tl));
     }
     a_token_2 = token_list_get(tl,0,0);
-   //printf("=%s=2",a_token_2->is);
     while(a_token_2!=NULL && a_token_2->type==I_COMMA)
     {
         tl->n++;//match ","
         XTlist_add(root_tree->child,struct XTtree *,do_all_exp(tl));
         a_token_2 = token_list_get(tl,0,0);
-       // printf("=%d=",a_token_2->type);
     }
     tl->n++;//match ")"
     return root_tree;
@@ -214,7 +206,6 @@ struct XTtree * do_function(struct token_list *tl)
 struct XTtree * do_exp_num(struct token_list *tl)
  {
     struct token *a_token = token_list_get(tl,0,0);
-    //判断a_token
     switch(a_token->type)
     {
     case I_NUMBER:
@@ -223,17 +214,14 @@ struct XTtree * do_exp_num(struct token_list *tl)
             struct XTtree *exp_tree=init_XTtree(0);
             exp_tree->token_type=I_NUMBER;
             exp_tree->token_is=a_token->is;
-            //printf("-%d-",tl->t[tl->n].type);
             return exp_tree;
         }
         break;
     case I_LEFT_SMALLQ:
         {
             tl->n++;//match "("
-            //puts("KK");
             struct XTtree *tmp = do_exp_exp(tl);
             tl->n++;//match ")"
-            //puts("ww");
             return tmp;
         }
     case I_IDEN:
@@ -249,7 +237,6 @@ struct XTtree * do_exp_num(struct token_list *tl)
                 struct XTtree *exp_tree=init_XTtree(0);
                 exp_tree->token_type=I_IDEN;
                 exp_tree->token_is=a_token->is;
-                //printf("-%d-",tl->t[tl->n].type);
                 return exp_tree;
             }
         }
@@ -265,21 +252,18 @@ struct XTtree * do_if(struct token_list *tl)
     struct XTtree * root = init_XTtree(2);
     root->token_type=I_IF;
     root->token_is="if";
-    tl->n+=1;
-    tl->n+=1;
-    struct XTtree * while_exp=do_bool_exp(tl);
-    XTlist_add(root->child,struct XTtree *,while_exp);
-    tl->n+=1;
-   // printf("/%d/ ",tl->t[tl->n].type);
+    tl->n+=1;//match if
+    tl->n+=1;//match (
+    struct XTtree * if_exp=do_bool_exp(tl);
+    XTlist_add(root->child,struct XTtree *,if_exp);
+    tl->n+=1;// match )
     XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
 
     struct token *a_token = token_list_get(tl,1,0);
     printf("/%s/ ",a_token->is);
     if(a_token!=NULL && a_token->type==I_ELSE)
     {
-        //printf("/%d/ ",tl->t[tl->n].type);
         tl->n+=2;//match ";"&&"else"
-       // printf("#%d# ",tl->t[tl->n].type);
         XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
     }
 
