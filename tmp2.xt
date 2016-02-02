@@ -23,7 +23,7 @@ c=8;
 if(b==c)
 {
 print(b);
-};;;;
+};
 else{
 
 if(a<b)

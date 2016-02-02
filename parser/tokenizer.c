@@ -107,14 +107,14 @@ int which_keywords(char *s)
     else if(0==strcmp(s,"return")) return I_RETURN;
     else return -1;
 }
-void print_token(struct token *t)
+void print_token(struct token t)
 {
-    char *is_tmp=t->is;
-    if(strlen(t->is)==0)
+    char *is_tmp=t.is;
+    if(strlen(t.is)==0)
     {
-        is_tmp=type_print[t->type]+3;
+        is_tmp=type_print[t.type]+3;
     }
-    printf("%-20s %-20s\n",type_print[t->type],is_tmp);
+    printf("%-20s %-20s\n",type_print[t.type],is_tmp);
 }
 
 //从s起始读取一个词素,返回读取的字符数
@@ -312,12 +312,18 @@ long int get_next_token(char *s,struct token *t)
 }
 struct token *token_list_get(struct token_list *tl,int which,int excursion)
 {
-    struct token *tmp = tl->n+which < tl->max_len ? &tl->t[tl->n+which]:NULL;
+    struct token *tmp = tl->n+which < tl->t->len ? XTlist_get_addr(tl->t,tl->n+which,struct token):NULL;
     if(excursion>=0)
     {
         tl->n+=excursion;
         //printf(" /t:%d/ ",tl->n);
     }
+    return tmp;
+};
+struct token_list * init_token_list(void)
+{
+    struct token_list *tmp=(struct token_list *)malloc(sizeof(struct token_list));
+    tmp->t=init_XTlist(100,sizeof(struct token_list));
     return tmp;
 };
 int file_to_token_to_array(const char *file_name,struct token_list *tl)
@@ -326,8 +332,9 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
     if(so==NULL)return -1;
     else
     {
-        int init_len=10000;//词素数组初始大小
-        tl->t=(struct token *)malloc(sizeof(struct token)*init_len);
+        //int init_len=10000;//词素数组初始大小
+        //tl->t=(struct token *)malloc(sizeof(struct token)*init_len);
+
         char *string_in = file_into_string(so);
         struct token tmp;
         struct token tmp_pre;
@@ -341,20 +348,23 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
             {
                 if(i>0)
                 {
-                    if(tmp.type==I_END_LINE_F && tl->t[i-1].type==I_END_LINE_F)
+                    if(tmp.type==I_END_LINE_F && XTlist_get(tl->t,i-1,struct token).type==I_END_LINE_F)
                     {
                         i--;
                         continue;
                     }
                 }
+                XTlist_add(tl->t,struct token,tmp);
+                /*
                 if(i>=init_len)
                 {
                     tl->t = (struct token *)realloc(tl->t,sizeof(struct token)*(i+1));
                 }
                 tl->t[i]=tmp;
+                */
             }
         }
-        tl->max_len=i;
+        //tl->max_len=i;
         tl->n=0;
     }
     return 0;

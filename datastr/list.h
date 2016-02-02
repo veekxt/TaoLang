@@ -14,6 +14,9 @@ void *data;//存放具体对象指针的数组
 #define XTlist_get(XTlist,n,type)\
         ((type)(*(((type *)XTlist->data)+(n))))
 
+#define XTlist_get_addr(XTlist,n,type)\
+        (((type *)XTlist->data)+(n))
+
 #define XTlist_assign(XTlist,n,type,dat)\
     {\
         type *not_use_tmp=(((type *)(XTlist)->data)+(n));\

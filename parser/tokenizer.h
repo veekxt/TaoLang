@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../datastr/list.h"
 
 #define NUM_KEYWORDS 3
 #define I_IF 0
@@ -45,11 +46,13 @@ struct token
 struct token_list
 {
     int n;//note：int 是否合适？
-    int max_len;
-    struct token *t;
+    //int max_len;
+    //struct token *t;
+    XTlist *t;
 };
 extern char *type_print[100];
+struct token_list * init_token_list(void);
 int file_to_token_to_array(const char *file_name,struct token_list *t);
-void print_token(struct token *t);
+void print_token(struct token t);
 struct token *token_list_get(struct token_list *,int,int);
 #endif // TOKENIZER_H_INCLUDED

@@ -384,14 +384,15 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
 
 int main(void)
 {
-    struct token_list tl;
-    file_to_token_to_array("tmp2.xt",&tl);
+    struct token_list *tl=init_token_list();
+
+    file_to_token_to_array("tmp2.xt",tl);
     puts("Token Stream:");
-    for(int i=0; i<tl.max_len; i++)
+    for(int i=0; i<tl->t->len; i++)
     {
-        print_token(&tl.t[i]);
+        print_token(XTlist_get(tl->t,i,struct token));
     }
-    struct XTtree *s=do_stmt(&tl);
+    struct XTtree *s=do_stmt(tl);
     puts("Tree:");
     print_XTtree_V(s,0);
     return 0;
