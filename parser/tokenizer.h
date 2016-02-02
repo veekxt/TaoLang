@@ -46,8 +46,6 @@ struct token
 struct token_list
 {
     int n;//note：int 是否合适？
-    //int max_len;
-    //struct token *t;
     XTlist *t;
 };
 extern char *type_print[100];

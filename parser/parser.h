@@ -4,6 +4,7 @@
 
 enum parser_node_type{
 STMT,
+STRING,
 IF_STMT,
 WHILE_STMT,
 ASSIGN_STMT,
@@ -26,12 +27,9 @@ UNKNOWN,
 
 struct XTtree
 {
-    //int token_type;
     enum parser_node_type parser_type;
-    //char *token_is;
     XTlist *child;
     char *content;
-    //int child_num;
 };
 
 struct XTtree *init_XTtree(int n);

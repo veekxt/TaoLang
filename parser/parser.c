@@ -8,6 +8,7 @@
 
 char *parser_node_type_comment[]={
 "stmt",
+"string",
 "if-stmt",
 "while-stmt",
 "assign-stmt",
@@ -96,29 +97,55 @@ void print_XTtree(struct XTtree *t)
         printf(")");
     }
 }
+
+struct XTtree * do_string_exp(struct token_list *tl)
+{
+    struct XTtree *root_tree = init_XTtree(0);
+    root_tree->parser_type=STRING;
+    struct token *a_token = token_list_get(tl,0,0);
+    root_tree->content=a_token->is;
+    tl->n++;
+    return root_tree;
+};
+
 struct XTtree * do_assign_stmt(struct token_list *tl)
 {
     struct XTtree *root_tree = init_XTtree(0);
     root_tree->parser_type=ASSIGN_STMT;
     XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
     tl->n++;
-    XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
+    XTlist_add(root_tree->child,struct XTtree *,do_all_exp(tl));
     return root_tree;
 };
 struct XTtree * do_all_exp(struct token_list *tl)
 {
     int tmp_n=tl->n;
-    struct XTtree *tmp_tree = do_exp_exp(tl);
     struct token *a_token = token_list_get(tl,0,0);
-    if(a_token!=NULL && is_relation_sign(a_token->type))
+    switch(a_token->type)
     {
-        tl->n=tmp_n;
-        free(tmp_tree);
-        return do_bool_exp(tl);
-    }else
-    {
-        return tmp_tree;//or tl->n=tmp_n; free(tmp_tree); do_exp_exp(tl);
+    case I_IDEN:
+    case I_NUMBER:
+        {
+            struct XTtree *tmp_tree = do_exp_exp(tl);
+            struct token *a_token = token_list_get(tl,0,0);
+            if(a_token!=NULL && is_relation_sign(a_token->type))
+            {
+                tl->n=tmp_n;
+                free(tmp_tree);
+                return do_bool_exp(tl);
+            }else
+            {
+                return tmp_tree;//or tl->n=tmp_n; free(tmp_tree); do_exp_exp(tl);
+            };
+        }
+        break;
+    case I_STRING:
+        {
+            do_string_exp(tl);
+        }
+        break;
     }
+
 }
 
 //布尔表达式
@@ -395,5 +422,6 @@ int main(void)
     struct XTtree *s=do_stmt(tl);
     puts("Tree:");
     print_XTtree_V(s,0);
+    tl->n=0;
     return 0;
 }
