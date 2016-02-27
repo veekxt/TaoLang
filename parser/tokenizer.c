@@ -316,7 +316,6 @@ struct token *token_list_get(struct token_list *tl,int which,int excursion)
     if(excursion>=0)
     {
         tl->n+=excursion;
-        //printf(" /t:%d/ ",tl->n);
     }
     return tmp;
 };
@@ -332,9 +331,6 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
     if(so==NULL)return -1;
     else
     {
-        //int init_len=10000;//词素数组初始大小
-        //tl->t=(struct token *)malloc(sizeof(struct token)*init_len);
-
         char *string_in = file_into_string(so);
         struct token tmp;
         struct token tmp_pre;
@@ -355,16 +351,16 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
                     }
                 }
                 XTlist_add(tl->t,struct token,tmp);
-                /*
-                if(i>=init_len)
+                if(tmp.type==I_RIGHT_BIGQ)
                 {
-                    tl->t = (struct token *)realloc(tl->t,sizeof(struct token)*(i+1));
+                    struct token tmp2;
+                    tmp2.type=I_END_LINE_F;
+                    tmp2.is="";
+                    XTlist_add(tl->t,struct token,tmp2);
+                    i++;
                 }
-                tl->t[i]=tmp;
-                */
             }
         }
-        //tl->max_len=i;
         tl->n=0;
     }
     return 0;

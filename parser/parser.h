@@ -36,9 +36,9 @@ struct XTtree *init_XTtree(int n);
 void print_XTtree_V(struct XTtree *t,int where_i);
 void print_XTtree(struct XTtree *);
 
-struct XTtree * do_exp_num(struct token_list *tl);//token流指向读取的数字下一个
-struct XTtree * do_exp_exp(struct token_list *tl);//表达式的下一个字符
-struct XTtree * do_stmt_specific(struct token_list *tl);//
+struct XTtree * do_exp_num(struct token_list *tl);
+struct XTtree * do_exp_exp(struct token_list *tl);
+struct XTtree * do_stmt_specific(struct token_list *tl);
 struct XTtree * do_stmt(struct token_list *tl);
 struct XTtree * do_while(struct token_list *tl);
 struct XTtree * do_function(struct token_list *tl);

@@ -15,7 +15,7 @@ char *parser_node_type_comment[]={
 "func-exp",
 "num-exp",
 "bool-exp",
-"number",
+"n",
 "iden",
 "+",
 "-",
@@ -73,7 +73,7 @@ void print_XTtree_V(struct XTtree *t,int where_i)
 }
 void print_XTtree(struct XTtree *t)
 {
-    //输出一棵树，格式为
+    //输出AST，格式为
     //根（子节点1，子节点2）
     //例子 1/23-(1+90) ==> -(/(1,23),+(1,90))
     //数据大时没有可读性
@@ -413,7 +413,7 @@ int main(void)
 {
     struct token_list *tl=init_token_list();
 
-    file_to_token_to_array("tmp2.xt",tl);
+    file_to_token_to_array("test/simple.xt",tl);
     puts("Token Stream:");
     for(int i=0; i<tl->t->len; i++)
     {

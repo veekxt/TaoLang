@@ -1,10 +1,13 @@
 //todo:赋值语句，if-else语句
-we+8-ksdf(2-8,3/4,4);
+we+82-ksdf(2-18,3/4,4);
 7+0;
 {
-5-9;
-{3+8;3+9;}
-};
+    5-9;
+    {
+        3+8;
+        3+9;
+    }
+}
 while(4 > 2)
 {
     4+9;
@@ -22,19 +25,17 @@ b=9;
 c=8;
 if(b==c)
 {
-print(b);
+    print(b);
 };
 else{
-
-if(a<b)
-{
-print(slide);
-};
-
-print(a);
-};
+    if(a<b)
+    {
+        print(slide);
+    }
+    print(a);
+}
 while(1>9)
 {
-print(kkk);
-};
+    print(kkk);
+}
 df="hahaha";
