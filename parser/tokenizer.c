@@ -156,8 +156,7 @@ long int get_next_token(char *s,struct token *t)
                 continue;
             }
             else
-            {struct XTtree *tmp=
-                s--;
+            {
                 break;
             }
         }

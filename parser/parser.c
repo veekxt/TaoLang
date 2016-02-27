@@ -423,5 +423,6 @@ int main(void)
     puts("Tree:");
     print_XTtree_V(s,0);
     tl->n=0;
+    printf("\n");
     return 0;
 }

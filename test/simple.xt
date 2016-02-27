@@ -1,15 +1,11 @@
 //todo:赋值语句，if-else语句
-we+82-ksdf(2-18,3/4,4);
-7+0;
+
+we = 23+(39-1)*6;
+testFun();
+
+while(input == 3)
 {
-    5-9;
-    {
-        3+8;
-        3+9;
-    }
-}
-while(4 > 2)
-{
+    test2();
     4+9;
     3+(1-1);
     while(2<9)
@@ -17,16 +13,18 @@ while(4 > 2)
         34-1;
     };
 };
-45+(2-4);
+
 print(heheh,45 > 5,3-1+(s-9));
 print(add(a+b,c-(1-d)),MULN(MUL(2)));
+
 a=b;
 b=9;
 c=8;
+
 if(b==c)
 {
     print(b);
-};
+}
 else{
     if(a<b)
     {
@@ -34,8 +32,6 @@ else{
     }
     print(a);
 }
-while(1>9)
-{
-    print(kkk);
-}
+
 df="hahaha";
+
