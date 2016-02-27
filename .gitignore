@@ -4,3 +4,4 @@
 *.depend
 *.layout
 bin*
+tmp*
