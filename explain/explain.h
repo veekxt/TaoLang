@@ -34,4 +34,5 @@ struct xt_function
 
 int explain(struct XTtree *,struct XTlist *);
 int print_symbol_table(struct XTlist *symbol_table);
+struct xt_value cal_exp(struct XTtree *exp);
 #endif // EXPLAIN_H_INCLUDED
