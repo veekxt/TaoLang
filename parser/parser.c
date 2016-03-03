@@ -194,7 +194,6 @@ op2 -> * | /
 */
 struct XTtree * do_exp_pri(struct token_list *tl)
 {
-    //struct XTtree *start = do_exp_num(tl);
     struct XTtree *start = do_exp_num(tl);
     struct XTtree *tmp_root=start;
     while(1)//注意这里不知道{ op S}的重复次数
@@ -205,18 +204,15 @@ struct XTtree * do_exp_pri(struct token_list *tl)
             enum parser_node_type type=UNKNOWN;
             switch(a_token_2->type)
             {
-               // case I_ADD:type=OP_ADD;break;
-               // case I_REDUCE:type=OP_REDUCE;break;
                 case I_MULTIPLY:type=OP_MULTIPLY;break;
                 case I_DIVIDE:type=OP_DIVIDE;break;
             }
             if(type!=UNKNOWN)
             {
-                tl->n++;//matc h "+ - / *"
+                tl->n++;//matc h "/ *"
                 struct XTtree *now_tree=init_XTtree(2);
                 now_tree->parser_type=type;
                 XTlist_add(now_tree->child,struct XTtree *,tmp_root);
-                //XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
                 XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
                 tmp_root=now_tree;
             }
@@ -236,7 +232,6 @@ struct XTtree * do_exp_pri(struct token_list *tl)
 
 struct XTtree * do_exp_exp(struct token_list *tl)
 {
-    //struct XTtree *start = do_exp_num(tl);
     struct XTtree *start = do_exp_pri(tl);
     struct XTtree *tmp_root=start;
     while(1)//注意这里不知道{ op S}的重复次数
@@ -249,16 +244,13 @@ struct XTtree * do_exp_exp(struct token_list *tl)
             {
                 case I_ADD:type=OP_ADD;break;
                 case I_REDUCE:type=OP_REDUCE;break;
-               // case I_MULTIPLY:type=OP_MULTIPLY;break;
-               // case I_DIVIDE:type=OP_DIVIDE;break;
             }
             if(type!=UNKNOWN)
             {
-                tl->n++;//matc h "+ - / *"
+                tl->n++;//matc h "+ -"
                 struct XTtree *now_tree=init_XTtree(2);
                 now_tree->parser_type=type;
                 XTlist_add(now_tree->child,struct XTtree *,tmp_root);
-                //XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
                 XTlist_add(now_tree->child,struct XTtree *,do_exp_pri(tl));
                 tmp_root=now_tree;
             }

@@ -332,7 +332,6 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
     {
         char *string_in = file_into_string(so);
         struct token tmp;
-        struct token tmp_pre;
         int i;
         for(i=0;; i++)
         {
