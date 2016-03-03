@@ -145,7 +145,7 @@ struct XTtree * do_all_exp(struct token_list *tl)
         }
         break;
     }
-
+    return NULL;
 }
 
 //布尔表达式
@@ -182,18 +182,62 @@ struct XTtree * do_bool_exp(struct token_list *tl)
 };
 /**
 
-//简单四则运算的parser测试
+//简单四则运算的parser测试，带有优先级
 
-S -> fac { op S}
-fac -> num | (S)
+S -> fac { op1 fac }    # do_exp_exp()
+fac -> N { op2 N }      # do_exp_pri()
+N -> num | (S)          # do_exp_num()
+num -> float | int
+op1 -> + | -
+op2 -> * | /
 
-fac和do_exp_num对应
-S和do_exp_exp对应
-printf("=%d=",a_token_2->type);
 */
+struct XTtree * do_exp_pri(struct token_list *tl)
+{
+    //struct XTtree *start = do_exp_num(tl);
+    struct XTtree *start = do_exp_num(tl);
+    struct XTtree *tmp_root=start;
+    while(1)//注意这里不知道{ op S}的重复次数
+    {
+        struct token *a_token_2 = token_list_get(tl,0,0);
+        if(a_token_2!=NULL)
+        {
+            enum parser_node_type type=UNKNOWN;
+            switch(a_token_2->type)
+            {
+               // case I_ADD:type=OP_ADD;break;
+               // case I_REDUCE:type=OP_REDUCE;break;
+                case I_MULTIPLY:type=OP_MULTIPLY;break;
+                case I_DIVIDE:type=OP_DIVIDE;break;
+            }
+            if(type!=UNKNOWN)
+            {
+                tl->n++;//matc h "+ - / *"
+                struct XTtree *now_tree=init_XTtree(2);
+                now_tree->parser_type=type;
+                XTlist_add(now_tree->child,struct XTtree *,tmp_root);
+                //XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
+                XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
+                tmp_root=now_tree;
+            }
+            else
+            {
+                break;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return tmp_root;
+};
+
 struct XTtree * do_exp_exp(struct token_list *tl)
 {
-    struct XTtree *start = do_exp_num(tl);
+    //struct XTtree *start = do_exp_num(tl);
+    struct XTtree *start = do_exp_pri(tl);
     struct XTtree *tmp_root=start;
     while(1)//注意这里不知道{ op S}的重复次数
     {
@@ -205,8 +249,8 @@ struct XTtree * do_exp_exp(struct token_list *tl)
             {
                 case I_ADD:type=OP_ADD;break;
                 case I_REDUCE:type=OP_REDUCE;break;
-                case I_MULTIPLY:type=OP_MULTIPLY;break;
-                case I_DIVIDE:type=OP_DIVIDE;break;
+               // case I_MULTIPLY:type=OP_MULTIPLY;break;
+               // case I_DIVIDE:type=OP_DIVIDE;break;
             }
             if(type!=UNKNOWN)
             {
@@ -214,7 +258,8 @@ struct XTtree * do_exp_exp(struct token_list *tl)
                 struct XTtree *now_tree=init_XTtree(2);
                 now_tree->parser_type=type;
                 XTlist_add(now_tree->child,struct XTtree *,tmp_root);
-                XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
+                //XTlist_add(now_tree->child,struct XTtree *,do_exp_num(tl));
+                XTlist_add(now_tree->child,struct XTtree *,do_exp_pri(tl));
                 tmp_root=now_tree;
             }
             else
@@ -413,7 +458,7 @@ int main(void)
 {
     struct token_list *tl=init_token_list();
 
-    file_to_token_to_array("test/simple.xt",tl);
+    file_to_token_to_array("test/exp.xt",tl);
     puts("Token Stream:");
     for(int i=0; i<tl->t->len; i++)
     {
