@@ -7,6 +7,7 @@ XTlist * init_XTlist(int len,int data_len)
 {
     XTlist *s = (XTlist *)malloc(sizeof(XTlist));
     s->len=0;
+    s->current=0;
     s->data_len=data_len;
     s->max_len=len;
     s->data=len<=0 ? NULL:malloc(data_len*len);

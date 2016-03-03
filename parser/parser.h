@@ -1,6 +1,7 @@
 #ifndef PARSER_H_INCLUDED
 #define PARSER_H_INCLUDED
 #include "../datastr/list.h"
+#include "tokenizer.h"
 
 enum parser_node_type{
 STMT,
@@ -27,7 +28,7 @@ UNKNOWN,
 
 struct XTtree
 {
-    enum parser_node_type parser_type;
+    enum parser_node_type tree_type;
     XTlist *child;
     char *content;
 };
@@ -37,6 +38,7 @@ void print_XTtree_V(struct XTtree *t,int where_i);
 void print_XTtree(struct XTtree *);
 
 struct XTtree * do_exp_num(struct token_list *tl);
+struct XTtree * do_exp_pri(struct token_list *tl);
 struct XTtree * do_exp_exp(struct token_list *tl);
 struct XTtree * do_stmt_specific(struct token_list *tl);
 struct XTtree * do_stmt(struct token_list *tl);

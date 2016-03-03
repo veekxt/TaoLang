@@ -4,6 +4,7 @@
 //数据结构之列表，可以追加元素，相当于自动增长长度的数组
 typedef struct XTlist{
 int len;
+int current;
 int max_len;
 int data_len;
 void *data;//存放具体对象指针的数组
