@@ -248,7 +248,7 @@ struct XTtree * do_exp_exp(struct token_list *tl)
             if(type!=UNKNOWN)
             {
                 tl->n++;//matc h "+ -"
-                struct XTtree *now_tree=init_XTtree(2);
+                struct XTtree *now_tree=init_XTtree(0);
                 now_tree->tree_type=type;
                 XTlist_add(now_tree->child,struct XTtree *,tmp_root);
                 XTlist_add(now_tree->child,struct XTtree *,do_exp_pri(tl));
@@ -264,7 +264,6 @@ struct XTtree * do_exp_exp(struct token_list *tl)
             break;
         }
     }
-
     return tmp_root;
 };
 
@@ -403,6 +402,7 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
     switch(a_token_2->type)
     {
         case I_NUMBER:
+        case I_LEFT_SMALLQ:
             {
                 struct XTtree *tmp=do_exp_exp(tl);
                 return tmp;
