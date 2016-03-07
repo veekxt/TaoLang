@@ -29,45 +29,32 @@ struct xt_value cal_exp(struct XTtree *exp)
     switch(exp->tree_type)
     {
         case OP_ADD:
-            {
-                struct XTtree *exp_l = XTlist_get(exp->child,0,struct XTtree *);
-                struct XTtree *exp_r = XTlist_get(exp->child,1,struct XTtree *);
-                struct xt_value tmp_l=cal_exp(exp_l);
-                struct xt_value tmp_r=cal_exp(exp_r);
-                tmp.u.int_value=tmp_l.u.int_value + tmp_r.u.int_value;
-                tmp.type=XT_V_INT;
-            }
-        break;
         case OP_DIVIDE:
-            {
-                struct XTtree *exp_l = XTlist_get(exp->child,0,struct XTtree *);
-                struct XTtree *exp_r = XTlist_get(exp->child,1,struct XTtree *);
-                struct xt_value tmp_l=cal_exp(exp_l);
-                struct xt_value tmp_r=cal_exp(exp_r);
-                tmp.u.int_value=tmp_l.u.int_value / tmp_r.u.int_value;
-                tmp.type=XT_V_INT;
-            }
-        break;
         case OP_MULTIPLY:
-            {
-                struct XTtree *exp_l = XTlist_get(exp->child,0,struct XTtree *);
-                struct XTtree *exp_r = XTlist_get(exp->child,1,struct XTtree *);
-                struct xt_value tmp_l=cal_exp(exp_l);
-                struct xt_value tmp_r=cal_exp(exp_r);
-                tmp.u.int_value=tmp_l.u.int_value * tmp_r.u.int_value;
-                tmp.type=XT_V_INT;
-            }
-        break;
         case OP_REDUCE:
             {
                 struct XTtree *exp_l = XTlist_get(exp->child,0,struct XTtree *);
                 struct XTtree *exp_r = XTlist_get(exp->child,1,struct XTtree *);
                 struct xt_value tmp_l=cal_exp(exp_l);
                 struct xt_value tmp_r=cal_exp(exp_r);
-                tmp.u.int_value=tmp_l.u.int_value - tmp_r.u.int_value;
                 tmp.type=XT_V_INT;
+                switch(exp->tree_type)
+                {
+                    case OP_ADD:
+                        tmp.u.int_value=tmp_l.u.int_value + tmp_r.u.int_value;
+                    break;
+                    case OP_REDUCE:
+                        tmp.u.int_value=tmp_l.u.int_value - tmp_r.u.int_value;
+                    break;
+                    case OP_MULTIPLY:
+                        tmp.u.int_value=tmp_l.u.int_value * tmp_r.u.int_value;
+                    break;
+                    case OP_DIVIDE:
+                        tmp.u.int_value=tmp_l.u.int_value / tmp_r.u.int_value;
+                    break;
+                }
             }
-        break;
+            break;
         case NUMBER:
             {
                 tmp.u.int_value=atoi(exp->content);
