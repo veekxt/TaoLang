@@ -58,6 +58,7 @@ char *type_print[100] =
     "return",
     "un_def",
     "function",
+    "float",
 };
 
 struct tok_input
@@ -105,6 +106,7 @@ int which_keywords(char *s)
     else if(0==strcmp(s,"while")) return I_WHILE;
     else if(0==strcmp(s,"def")) return I_DEF;
     else if(0==strcmp(s,"return")) return I_RETURN;
+    else if(0==strcmp(s,"let")) return I_LET;
     else return -1;
 }
 void print_token(struct token t)
@@ -203,20 +205,32 @@ long int get_next_token(char *s,struct token *t)
     {
         s++;
         len_ch++;
-        //获取完整标识符或关键字
-        while(*s>='0' && *s<='9')
+        int is_float =0;
+
+        while(1)
         {
-            len_ch++;
-            s++;
+            if(*s=='.' &&  is_float == 0)
+            {
+                is_float = 1 ;
+                len_ch++;
+                s++;
+            }
+            else if(*s>='0' && *s<='9')
+            {
+                len_ch++;
+                s++;
+            }else
+            {
+                break;
+            }
         }
         char *tmp=malloc(sizeof(char)*len_ch+1);
         memcpy(tmp,tok.start,len_ch);
         *(tmp+len_ch)='\0';
         tok.buf=tmp;
 
-        t->type=I_NUMBER;
+        t->type=is_float?I_FLOAT:I_NUMBER;
         t->is=tmp;
-
     }
     else
     {

@@ -9,10 +9,11 @@
 char *parser_node_type_comment[]={
 "stmt",
 "string",
-"if-stmt",
-"while-stmt",
-"assign-stmt",
-"func-exp",
+"if",
+"while",
+"let",
+"assign",
+"fun-call",
 "num-exp",
 "bool-exp",
 "n",
@@ -43,6 +44,7 @@ struct XTtree *init_XTtree(int n)
 /**
 例子
 a-b =>
+
 -
   a
   b
@@ -141,7 +143,7 @@ struct XTtree * do_all_exp(struct token_list *tl)
         break;
     case I_STRING:
         {
-            do_string_exp(tl);
+            return do_string_exp(tl);
         }
         break;
     }
@@ -394,6 +396,17 @@ struct XTtree * do_stmt(struct token_list *tl)
     end:return root;
 }
 
+struct XTtree * do_let(struct token_list *tl)
+{
+    struct XTtree *root_tree = init_XTtree(0);
+    root_tree->tree_type=LET_STMT;
+    tl->n++;//match "let"
+    XTlist_add(root_tree->child,struct XTtree *,do_exp_exp(tl));
+    tl->n++;//match "="
+    XTlist_add(root_tree->child,struct XTtree *,do_all_exp(tl));
+    return root_tree;
+};
+
 struct XTtree * do_stmt_specific(struct token_list *tl)
 {
     struct token *a_token_2 = token_list_get(tl,0,0);
@@ -438,6 +451,11 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
         case I_IF:
             {
                 return do_if(tl);
+            }
+            break;
+        case I_LET:
+            {
+                return do_let(tl);
             }
             break;
         default:

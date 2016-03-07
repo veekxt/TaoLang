@@ -1,6 +1,6 @@
 //todo:赋值语句，if-else语句
 
-we = 23+(39-1)*6;
+let we = 23+(39-1)*6;
 testFun();
 
 while(input == 3)
@@ -17,11 +17,10 @@ while(input == 3)
 print(heheh,45 > 5,3-1+(s-9));
 print(add(a+b,c-(1-d)),MULN(MUL(2)));
 
-a=b;
-b=9;
-c=8;
+let a=we;
+we=9;
 
-if(b==c)
+if(a==we)
 {
     print(b);
 }
@@ -33,5 +32,7 @@ else{
     print(a);
 }
 
-df="hahaha";
+let df="hahaha";
+df="not ha";
+
 
