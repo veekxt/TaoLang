@@ -5,6 +5,7 @@
 #include "../datastr/list.h"
 #include "explain.h"
 
+/*
 int print_symbol_table(struct XTlist *symbol_table)
 {
     for(int i=0;i<symbol_table->len;i++)
@@ -18,6 +19,7 @@ int print_symbol_table(struct XTlist *symbol_table)
     return 0;
 }
 
+*/
 
 struct xt_value cal_exp(struct XTtree *exp)
 {
@@ -72,6 +74,11 @@ struct xt_value cal_exp(struct XTtree *exp)
                 tmp.type=XT_V_INT;
             }
         break;
+        case IDEN:
+            {
+
+            }
+            break;
         default:;
     }
     return tmp;
@@ -81,7 +88,7 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
 {
     struct XTlist *list_var=init_XTlist(0,sizeof(struct xt_symbol *));//当前符号表
     XTlist_add(symbol_table,struct XTlist *,list_var);                  //当前符号表放在栈的最顶层
-    symbol_table->current+=1;                                       // 栈指针+1
+    //symbol_table->current+=1;                                       // 栈指针+1
 
     for(int i=0;i<root->child->len;i++)
     {
@@ -114,5 +121,6 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
         default:;
         }
     }
+    XTlist_pop(symbol_table,struct XTlist *);
     return 0;
 }

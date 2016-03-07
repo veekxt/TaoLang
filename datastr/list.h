@@ -35,5 +35,10 @@ void *data;//存放具体对象指针的数组
         *(not_use_tmp)=(dat);\
         l->len++;\
     }
+#define XTlist_pop(l,type)\
+    {\
+        l->len--;\
+    }
+
 XTlist * init_XTlist(int len,int data_len);
 #endif // LIST_H_INCLUDED
