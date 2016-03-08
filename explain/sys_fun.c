@@ -18,7 +18,7 @@ void xtlang_sys_print(struct XTlist *argv)
             break;
             case XT_V_STR:
                 {
-
+                    printf("%s",arg_tmp.u.string_value);
                 }
             break;
         }

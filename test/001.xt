@@ -3,4 +3,12 @@
 let var_1 = 23;
 let var_2 = 2;
 let var_3 = var_1 * var_2;
-print(var_1 + var_3); //print "69"
+print(var_1 + var_3," "); //print "69"
+
+//测试作用域
+{
+    let var_1 =3;
+    print(var_1," ");
+}
+
+print(var_1);

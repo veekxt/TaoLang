@@ -4,6 +4,7 @@
 #include "../parser/parser.h"
 #include "../datastr/list.h"
 #include "explain.h"
+#include "sys_fun.h"
 
 /*
 int print_symbol_table(struct XTlist *symbol_table)
@@ -23,10 +24,12 @@ int print_symbol_table(struct XTlist *symbol_table)
 
 struct xt_value find_sys_function(const char *name,struct XTlist *argv)
 {
+    struct xt_value target;
     if(strcmp("print",name)==0)
     {
        xtlang_sys_print(argv);
     }
+    return target;
 };
 
 struct xt_value find_iden(const char *name,struct XTlist *symbol_table)
@@ -94,7 +97,12 @@ struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table)
                 tmp=iden_value;
             }
             break;
-        default:;
+        case STRING:
+            {
+                tmp.u.string_value=exp->content;
+                tmp.type=XT_V_STR;
+            }
+            break;
     }
     return tmp;
 };
@@ -130,7 +138,7 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
         case OP_MULTIPLY:
         case OP_REDUCE:
             {
-                struct xt_value target = cal_exp(tmp,symbol_table);
+               // struct xt_value target = cal_exp(tmp,symbol_table);
             }
             break;
         case FUNCTION_EXP:
