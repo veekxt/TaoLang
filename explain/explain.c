@@ -21,6 +21,14 @@ int print_symbol_table(struct XTlist *symbol_table)
 
 */
 
+struct xt_value find_sys_function(const char *name,struct XTlist *argv)
+{
+    if(strcmp("print",name)==0)
+    {
+       xtlang_sys_print(argv);
+    }
+};
+
 struct xt_value find_iden(const char *name,struct XTlist *symbol_table)
 {
     struct xt_value tmp;
@@ -102,7 +110,8 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
         struct XTtree *tmp = XTlist_get(root->child,i,struct XTtree *);
         switch(tmp->tree_type)
         {
-        case ASSIGN_STMT:
+            //case ASSIGN_STMT:
+            case LET_STMT:
             {
                 struct xt_symbol *var = (struct xt_symbol *)malloc(sizeof(struct xt_symbol));
                 var->name=(XTlist_get(tmp->child,0,struct XTtree *))->content;
@@ -122,10 +131,20 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
         case OP_REDUCE:
             {
                 struct xt_value target = cal_exp(tmp,symbol_table);
-                printf("target is %d\n",target.u.int_value);
             }
             break;
-        default:;
+        case FUNCTION_EXP:
+            {
+                struct XTlist *list_var=init_XTlist(0,sizeof(struct xt_value));
+                for(int i=0;i<tmp->child->len;i++)
+                {
+                    struct XTtree *node_arg_tmp = XTlist_get(tmp->child,i,struct XTtree *);
+                    struct xt_value arg_tmp = cal_exp(node_arg_tmp,symbol_table);
+                    XTlist_add(list_var,struct xt_value,arg_tmp);
+                }
+                find_sys_function(tmp->content,list_var);
+            }
+        break;
         }
     }
     XTlist_pop(symbol_table,struct XTlist *);
