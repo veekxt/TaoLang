@@ -11,4 +11,7 @@ print(var_1 + var_3," "); //print "69"
     print(var_1," ");
 }
 
-print(var_1);
+print(var_1," ");
+
+let var_9="test String";
+print(var_9);
