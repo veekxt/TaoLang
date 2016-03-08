@@ -21,7 +21,26 @@ int print_symbol_table(struct XTlist *symbol_table)
 
 */
 
-struct xt_value cal_exp(struct XTtree *exp)
+struct xt_value find_iden(const char *name,struct XTlist *symbol_table)
+{
+    struct xt_value tmp;
+    for(int i=symbol_table->len-1;i>=0;i--)
+    {
+        struct XTlist * list_var=XTlist_get(symbol_table,i,struct XTlist *);
+        for(int j=list_var->len-1;j>=0;j--)
+        {
+            if(strcmp(name,XTlist_get(list_var,j,struct xt_symbol *)->name)==0)
+            {
+                tmp=XTlist_get(list_var,j,struct xt_symbol *)->value;
+                return tmp;
+            }
+        }
+    }
+    tmp.type=XT_V_NULL;
+    return tmp;
+};
+
+struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table)
 {
     struct xt_value tmp;
     tmp.type=XT_V_INT;
@@ -35,8 +54,8 @@ struct xt_value cal_exp(struct XTtree *exp)
             {
                 struct XTtree *exp_l = XTlist_get(exp->child,0,struct XTtree *);
                 struct XTtree *exp_r = XTlist_get(exp->child,1,struct XTtree *);
-                struct xt_value tmp_l=cal_exp(exp_l);
-                struct xt_value tmp_r=cal_exp(exp_r);
+                struct xt_value tmp_l=cal_exp(exp_l,symbol_table);
+                struct xt_value tmp_r=cal_exp(exp_r,symbol_table);
                 tmp.type=XT_V_INT;
                 switch(exp->tree_type)
                 {
@@ -63,7 +82,8 @@ struct xt_value cal_exp(struct XTtree *exp)
         break;
         case IDEN:
             {
-
+                struct xt_value iden_value = find_iden(exp->content,symbol_table);
+                tmp=iden_value;
             }
             break;
         default:;
@@ -86,7 +106,7 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
             {
                 struct xt_symbol *var = (struct xt_symbol *)malloc(sizeof(struct xt_symbol));
                 var->name=(XTlist_get(tmp->child,0,struct XTtree *))->content;
-                var->value=cal_exp(XTlist_get(tmp->child,1,struct XTtree *));
+                var->value=cal_exp(XTlist_get(tmp->child,1,struct XTtree *),symbol_table);
                 XTlist_add(list_var,struct xt_symbol *,var);
             }
             break;
@@ -101,7 +121,7 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
         case OP_MULTIPLY:
         case OP_REDUCE:
             {
-                struct xt_value target = cal_exp(tmp);
+                struct xt_value target = cal_exp(tmp,symbol_table);
                 printf("target is %d\n",target.u.int_value);
             }
             break;

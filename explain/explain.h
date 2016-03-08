@@ -8,6 +8,7 @@ enum xt_value_type
 {
     XT_V_INT,
     XT_V_STR,
+    XT_V_NULL,
 };
 
 struct xt_value
@@ -33,6 +34,6 @@ struct xt_function
 };
 
 int explain(struct XTtree *,struct XTlist *);
-int print_symbol_table(struct XTlist *symbol_table);
-struct xt_value cal_exp(struct XTtree *exp);
+struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table);
+struct xt_value find_iden(const char *name,struct XTlist *symbol_table);
 #endif // EXPLAIN_H_INCLUDED
