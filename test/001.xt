@@ -3,4 +3,4 @@
 let tmp = 23
 let i = 23
 
-print("23*23 is",tmp * i)
+print("23*23 is ",tmp * i)

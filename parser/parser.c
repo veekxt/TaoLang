@@ -381,7 +381,7 @@ struct XTtree * do_stmt(struct token_list *tl)
 {
     struct XTtree * start = do_stmt_specific(tl);
     struct XTtree * root = init_XTtree(0);
-    XTlist_add(root->child,struct XTtree *,start);
+    if(start!=NULL)XTlist_add(root->child,struct XTtree *,start);
     root->tree_type=STMT;
     while(1)
     {
@@ -418,6 +418,9 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
     if(a_token_2==NULL)return NULL;
     switch(a_token_2->type)
     {
+        case I_END_LINE_F:
+            return NULL;
+        break;
         case I_NUMBER:
         case I_LEFT_SMALLQ:
             {
