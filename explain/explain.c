@@ -6,21 +6,6 @@
 #include "explain.h"
 #include "sys_fun.h"
 
-/*
-int print_symbol_table(struct XTlist *symbol_table)
-{
-    for(int i=0;i<symbol_table->len;i++)
-    {
-        struct XTlist * list_var=XTlist_get(symbol_table,i,struct XTlist *);
-        for(int j=0;j<list_var->len;j++)
-        {
-            printf("level %d, %d rd variable,%s == %d\n",i,j,XTlist_get(list_var,j,struct xt_symbol *)->name,XTlist_get(list_var,j,struct xt_symbol *)->value.u.int_value);
-        }
-    }
-    return 0;
-}
-
-*/
 
 struct xt_value find_sys_function(const char *name,struct XTlist *argv)
 {

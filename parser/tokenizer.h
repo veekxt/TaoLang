@@ -38,6 +38,8 @@
 #define I_LET 28
 #define I_MOD 29
 #define I_END_LINE_N 30
+#define I_TRUE 31
+#define I_FALSE 32
 
 struct token
 {

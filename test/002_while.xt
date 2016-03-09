@@ -4,7 +4,6 @@
 //计算1加到100的和
 let s=0;
 let i=0
-
 while(i<=100)
 {
     s=s+i;
@@ -17,8 +16,9 @@ i=0;
 //输出所有3的倍数
 while(i<=100)
 {
-    let j=i%3;
-    if(j == 0){
+    # let j=i%3;
+    # comment
+    if(i % 3 == 0){
         print(i," ")
     }
     i=i+1

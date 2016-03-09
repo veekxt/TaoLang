@@ -60,6 +60,8 @@ char *type_print[100] =
     "let",
     "f: %",
     "j: ;(\\n)",
+    "true",
+    "false",
 };
 
 struct tok_input
@@ -114,6 +116,8 @@ int which_keywords(char *s)
     else if(0==strcmp(s,"def")) return I_DEF;
     else if(0==strcmp(s,"return")) return I_RETURN;
     else if(0==strcmp(s,"let")) return I_LET;
+    else if(0==strcmp(s,"true")) return I_TRUE;
+    else if(0==strcmp(s,"false")) return I_FALSE;
     else return -1;
 }
 void print_token(struct token t)
