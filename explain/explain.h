@@ -37,5 +37,5 @@ struct xt_function
 
 int explain(struct XTtree *,struct XTlist *);
 struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table);
-struct xt_value find_iden(const char *name,struct XTlist *symbol_table);
+struct xt_symbol *find_iden(const char *name,struct XTlist *symbol_table);
 #endif // EXPLAIN_H_INCLUDED

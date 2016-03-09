@@ -50,8 +50,6 @@ char *type_print[100] =
     "f: *",
     "f: /",
     "f: =",
-    "f: >=",
-    "f: <=",
     "f: ==",
     "j: ,",
     "def",
@@ -61,6 +59,7 @@ char *type_print[100] =
     "float",
     "let",
     "f: %",
+    "j: ;(\n)",
 };
 
 struct tok_input
@@ -245,6 +244,7 @@ long int get_next_token(char *s,struct token *t)
         switch(*(s++))
         {
         case ';':
+            //t->type=I_END_LINE_N;
         case '\n':
             t->type=I_END_LINE_F;
             break;
@@ -291,7 +291,7 @@ long int get_next_token(char *s,struct token *t)
             switch(*(s++))
             {
             case '=':
-                t->type=I_LEFT_K_EQAUL;
+                t->type=I_SMALLER_EQAUL;
                 break;
             default:
                 t->type=I_LEFT_K;
@@ -302,7 +302,7 @@ long int get_next_token(char *s,struct token *t)
             switch(*(s++))
             {
             case '=':
-                t->type=I_RIGHT_K_EQAUL;
+                t->type=I_BIGER_EQAUL;
                 break;
             default:
                 t->type=I_RIGHT_K;
