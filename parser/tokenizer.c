@@ -314,19 +314,52 @@ long int get_next_token(char *s,struct token *t)
             {
                 if(*s=='\\')
                 {
-                    if(*(s+1)=='n')
+                    switch(*(s+1))
                     {
+                    case 'n':
                         add_char_to_str(&buf,'\n');
                         s+=2;
-                    }
-                    else if(*(s+1)=='"')
-                    {
-                        add_char_to_str(&buf,'\n');
+                    break;
+                    case '"':
+                        add_char_to_str(&buf,'"');
                         s+=2;
-                    }
-                    else
-                    {
-
+                    break;
+                    case 'a':
+                        add_char_to_str(&buf,'\a');
+                        s+=2;
+                    break;
+                    case 'b':
+                        add_char_to_str(&buf,'\b');
+                        s+=2;
+                    break;
+                    case 'f':
+                        add_char_to_str(&buf,'\f');
+                        s+=2;
+                    break;
+                    case 'r':
+                        add_char_to_str(&buf,'\r');
+                        s+=2;
+                    break;
+                    case 't':
+                        add_char_to_str(&buf,'\t');
+                        s+=2;
+                    break;
+                    case 'v':
+                        add_char_to_str(&buf,'\v');
+                        s+=2;
+                    break;
+                    case '\\':
+                        add_char_to_str(&buf,'\\');
+                        s+=2;
+                    break;
+                    case '0':
+                        add_char_to_str(&buf,'\0');
+                        s+=2;
+                    break;
+                    default:
+                        s++;
+                        add_char_to_str(&buf,'\\');
+                        ;
                     }
                 }else
                 {
@@ -343,22 +376,6 @@ long int get_next_token(char *s,struct token *t)
             }
             t->is=buf;
             t->type=I_STRING;
-            /*
-            tok.start=s;
-
-            while(!(*s=='"'&& !(*(s-1)=='\\')) || *s=='\0')
-            {
-                s++;
-            }
-            s++;
-            int len_ch=s-tok.start;
-            char *tmp=malloc(sizeof(char)*(len_ch));
-            memcpy(tmp,tok.start,len_ch);
-            *(tmp+(s-tok.start)-1)='\0';
-            tok.buf=tmp;
-            t->type=I_STRING;
-            t->is=tmp;
-            */
         }
         break;
         case ',':

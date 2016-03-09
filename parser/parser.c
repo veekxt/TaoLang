@@ -43,11 +43,13 @@ struct XTtree *init_XTtree(int n)
 //可视化的树状显示,横向
 /**
 例子
-a-b =>
+a-b*c =>
 
 -
   a
-  b
+  *
+    b
+    c
 
 */
 void print_XTtree_V(struct XTtree *t,int where_i)
