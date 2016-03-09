@@ -50,8 +50,6 @@ char *type_print[100] =
     "f: *",
     "f: /",
     "f: =",
-    "f: >=",
-    "f: <=",
     "f: ==",
     "j: ,",
     "def",
@@ -61,6 +59,7 @@ char *type_print[100] =
     "float",
     "let",
     "f: %",
+    "j: ;(\\n)",
 };
 
 struct tok_input
@@ -245,6 +244,7 @@ long int get_next_token(char *s,struct token *t)
         switch(*(s++))
         {
         case ';':
+            //t->type=I_END_LINE_N;
         case '\n':
             t->type=I_END_LINE_F;
             break;
@@ -268,7 +268,6 @@ long int get_next_token(char *s,struct token *t)
             {
             case '=':
                 t->type=I_EQAUL_VAR;
-                t->is="==";
                 break;
             default:
                 t->type=I_EQAUL;
@@ -291,7 +290,7 @@ long int get_next_token(char *s,struct token *t)
             switch(*(s++))
             {
             case '=':
-                t->type=I_LEFT_K_EQAUL;
+                t->type=I_SMALLER_EQAUL;
                 break;
             default:
                 t->type=I_LEFT_K;
@@ -302,7 +301,7 @@ long int get_next_token(char *s,struct token *t)
             switch(*(s++))
             {
             case '=':
-                t->type=I_RIGHT_K_EQAUL;
+                t->type=I_BIGER_EQAUL;
                 break;
             default:
                 t->type=I_RIGHT_K;
@@ -429,8 +428,6 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
                     }
                 }
                 XTlist_add(tl->t,struct token,tmp);
-                printf("##%p-%s##\n",XTlist_get(tl->t,tl->t->len-1,struct token).is,XTlist_get(tl->t,tl->t->len-1,struct token).is);
-
                 if(tmp.type==I_RIGHT_BIGQ)
                 {
                     struct token tmp2;

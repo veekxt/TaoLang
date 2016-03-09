@@ -28,17 +28,16 @@
 #define I_MULTIPLY 18
 #define I_DIVIDE 19
 #define I_EQAUL 20
-#define I_RIGHT_K_EQAUL 21
-#define I_LEFT_K_EQAUL 22
-#define I_EQAUL_VAR 23
-#define I_COMMA 24
-#define I_DEF 25
-#define I_RETURN 26
-#define I_UNDEF 27
-#define T_FUN 28
-#define I_FLOAT 29
-#define I_LET 30
-#define I_MOD 31
+#define I_EQAUL_VAR 21
+#define I_COMMA 22
+#define I_DEF 23
+#define I_RETURN 24
+#define I_UNDEF 25
+#define T_FUN 26
+#define I_FLOAT 27
+#define I_LET 28
+#define I_MOD 29
+#define I_END_LINE_N 30
 
 struct token
 {

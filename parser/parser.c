@@ -352,12 +352,21 @@ struct XTtree * do_if(struct token_list *tl)
     struct XTtree * if_exp=do_bool_exp(tl);
     XTlist_add(root->child,struct XTtree *,if_exp);
     tl->n+=1;// match )
+
+    //支持另起一行
+    struct token *a_token_tmp = token_list_get(tl,0,0);
+    if(a_token_tmp->type==I_END_LINE_F)tl->n++;
+
     XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
 
     struct token *a_token = token_list_get(tl,1,0);
     if(a_token!=NULL && a_token->type==I_ELSE)
     {
         tl->n+=2;//match ";"&&"else"
+        //支持另起一行
+        struct token *a_token_tmp = token_list_get(tl,0,0);
+        if(a_token_tmp->type==I_END_LINE_F)tl->n++;
+
         XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
     }
 
@@ -373,6 +382,10 @@ struct XTtree * do_while(struct token_list *tl)
     struct XTtree * while_exp=do_bool_exp(tl);
     XTlist_add(root->child,struct XTtree *,while_exp);
     tl->n+=1;
+    //支持另起一行
+    struct token *a_token = token_list_get(tl,0,0);
+    if(a_token->type==I_END_LINE_F)tl->n++;
+
     XTlist_add(root->child,struct XTtree *,do_stmt_specific(tl));
     return root;
 };

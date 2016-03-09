@@ -32,9 +32,8 @@ struct xt_value find_sys_function(const char *name,struct XTlist *argv)
     return target;
 };
 
-struct xt_value find_iden(const char *name,struct XTlist *symbol_table)
+struct xt_symbol *find_iden(const char *name,struct XTlist *symbol_table)
 {
-    struct xt_value tmp;
     for(int i=symbol_table->len-1;i>=0;i--)
     {
         struct XTlist * list_var=XTlist_get(symbol_table,i,struct XTlist *);
@@ -42,13 +41,11 @@ struct xt_value find_iden(const char *name,struct XTlist *symbol_table)
         {
             if(strcmp(name,XTlist_get(list_var,j,struct xt_symbol *)->name)==0)
             {
-                tmp=XTlist_get(list_var,j,struct xt_symbol *)->value;
-                return tmp;
+                return XTlist_get(list_var,j,struct xt_symbol *);
             }
         }
     }
-    tmp.type=XT_V_NULL;
-    return tmp;
+    return NULL;
 };
 /**
 布尔表达式的计算
@@ -134,7 +131,8 @@ struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table)
         break;
         case IDEN:
             {
-                struct xt_value iden_value = find_iden(exp->content,symbol_table);
+                struct xt_symbol *symbol_tmp = find_iden(exp->content,symbol_table);
+                struct xt_value iden_value = symbol_tmp->value;
                 tmp=iden_value;
             }
             break;
@@ -171,6 +169,18 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
                 var->name=(XTlist_get(tmp->child,0,struct XTtree *))->content;
                 var->value=cal_exp(XTlist_get(tmp->child,1,struct XTtree *),symbol_table);
                 XTlist_add(list_var,struct xt_symbol *,var);
+            }
+            break;
+        // 赋值语句
+        case ASSIGN_STMT:
+            {
+                char * name =(XTlist_get(tmp->child,0,struct XTtree *))->content;
+                struct xt_symbol *var = find_iden(name,symbol_table);
+                if(var != NULL)
+                {
+                    struct XTtree * exp=XTlist_get(tmp->child,1,struct XTtree *);
+                    var->value=cal_exp(exp,symbol_table);
+                }
             }
             break;
         //语句块，递归调用
@@ -216,6 +226,17 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
                 }else
                 {
                     if(if_stmt_else != NULL) explain(if_stmt_else,symbol_table);
+                }
+            }
+        break;
+        //while语句，循环判断表达式和执行
+        case WHILE_STMT:
+            {
+                struct XTtree * bool_exp=XTlist_get(tmp->child,0,struct XTtree *);
+                struct XTtree * while_stmt=XTlist_get(tmp->child,1,struct XTtree *);
+                while(cal_bool_exp(bool_exp,symbol_table).u.bool_value != 0)
+                {
+                    explain(while_stmt,symbol_table);
                 }
             }
         break;
