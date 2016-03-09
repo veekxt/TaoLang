@@ -50,7 +50,44 @@ struct xt_value find_iden(const char *name,struct XTlist *symbol_table)
     tmp.type=XT_V_NULL;
     return tmp;
 };
+/**
+布尔表达式的计算
+*/
+struct xt_value cal_bool_exp(struct XTtree *exp,struct XTlist *symbol_table)
+{
+    struct xt_value tmp;
+    tmp.type=XT_V_BOOL;
+    tmp.u.bool_value=0;
 
+    struct XTtree *exp_l = XTlist_get(exp->child,0,struct XTtree *);
+    struct XTtree *exp_r = XTlist_get(exp->child,1,struct XTtree *);
+    struct xt_value tmp_l=cal_exp(exp_l,symbol_table);
+    struct xt_value tmp_r=cal_exp(exp_r,symbol_table);
+
+    switch(exp->tree_type)
+    {
+    case SMALLER_COM:
+        tmp.u.bool_value = tmp_l.u.int_value <  tmp_r.u.int_value ?1:0;
+    break;
+    case BIGGER_COM:
+        tmp.u.bool_value = tmp_l.u.int_value >  tmp_r.u.int_value ?1:0;
+    break;
+    case SMALLER_COM_EQ:
+        tmp.u.bool_value = tmp_l.u.int_value <= tmp_r.u.int_value ?1:0;
+    break;
+    case BIGER_COM_EQ:
+        tmp.u.bool_value = tmp_l.u.int_value >= tmp_r.u.int_value ?1:0;
+    break;
+    case EQAUL:
+        tmp.u.bool_value = tmp_l.u.int_value == tmp_r.u.int_value ?1:0;
+    break;
+    default:;
+    }
+    return tmp;
+};
+/**
+表达式的计算，递归
+*/
 struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table)
 {
     struct xt_value tmp;
@@ -110,7 +147,12 @@ struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table)
     }
     return tmp;
 };
-
+/**
+解释AST，递归
+初始符号表栈由外部提供
+每遇到新的作用域就建一个符号列表，并进入符号表栈
+离开作用域时出栈
+*/
 int explain(struct XTtree *root,struct XTlist *symbol_table)
 {
     struct XTlist *list_var=init_XTlist(0,sizeof(struct xt_symbol *));//当前符号表
@@ -122,8 +164,8 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
         struct XTtree *tmp = XTlist_get(root->child,i,struct XTtree *);
         switch(tmp->tree_type)
         {
-            //case ASSIGN_STMT:
-            case LET_STMT:
+        //let 声明语句
+        case LET_STMT:
             {
                 struct xt_symbol *var = (struct xt_symbol *)malloc(sizeof(struct xt_symbol));
                 var->name=(XTlist_get(tmp->child,0,struct XTtree *))->content;
@@ -131,11 +173,13 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
                 XTlist_add(list_var,struct xt_symbol *,var);
             }
             break;
+        //语句块，递归调用
         case STMT:
             {
                 explain(tmp,symbol_table);
             }
             break;
+        //单独的表达式，暂时不用
         case NUM_EXP:
         case OP_ADD:
         case OP_DIVIDE:
@@ -145,6 +189,7 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
                // struct xt_value target = cal_exp(tmp,symbol_table);
             }
             break;
+        //函数调用
         case FUNCTION_EXP:
             {
                 struct XTlist *list_var=init_XTlist(0,sizeof(struct xt_value));
@@ -155,6 +200,23 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
                     XTlist_add(list_var,struct xt_value,arg_tmp);
                 }
                 find_sys_function(tmp->content,list_var);
+            }
+        break;
+        //if语句,根据计算结果判断是否执行内部语句快,如果有else，则分条件执行
+        case IF_STMT:
+            {
+                struct XTtree * bool_exp=XTlist_get(tmp->child,0,struct XTtree *);
+                struct XTtree * if_stmt=XTlist_get(tmp->child,1,struct XTtree *);
+                struct XTtree * if_stmt_else =NULL;
+                if(tmp->child->len == 3 )if_stmt_else = XTlist_get(tmp->child,2,struct XTtree *);
+
+                if(cal_bool_exp(bool_exp,symbol_table).u.bool_value != 0)
+                {
+                    explain(if_stmt,symbol_table);
+                }else
+                {
+                    if(if_stmt_else != NULL) explain(if_stmt_else,symbol_table);
+                }
             }
         break;
         }

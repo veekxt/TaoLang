@@ -1,0 +1,13 @@
+//测试0.02：0.01基础上加上if语句，不支持 || && 等
+//条件支持 > < == >= <=
+
+let tmp = 23
+let tao = 24
+if(tmp > tao){
+    print("tmp is biger than tao\n")
+}
+else{
+    print("tmp is smaller than tao\n")
+}
+if(23 % 2 == 1){print("23 is jishu ")}
+print("23*23 is ",tmp * tmp)

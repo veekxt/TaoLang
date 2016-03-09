@@ -8,6 +8,7 @@ enum xt_value_type
 {
     XT_V_INT,
     XT_V_STR,
+    XT_V_BOOL,
     XT_V_NULL,
 };
 
@@ -16,6 +17,7 @@ struct xt_value
     enum xt_value_type type;
     union {
         int int_value;
+        int bool_value;
         double double_value;
         char * string_value;
     } u;

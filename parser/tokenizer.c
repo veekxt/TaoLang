@@ -90,11 +90,9 @@ char * file_into_string(FILE *fp)
 void add_char_to_str(char **s,char ch)
 {
     size_t len = strlen(*s);
-    *s = (char *)realloc(*s,sizeof(char)*len+1);
+    *s = (char *)realloc(*s,sizeof(char)*(len+2));
     (*s)[len] = ch;
     (*s)[len+1] = 0;
-
-
 }
 //判断字符是否是空白分隔符
 int is_white(char ch)
@@ -375,7 +373,8 @@ long int get_next_token(char *s,struct token *t)
                     }
                     else
                     {
-                        add_char_to_str(&buf,*s++);
+                        add_char_to_str(&buf,*s);
+                        s++;
                     }
                 }
             }
@@ -402,7 +401,7 @@ struct token *token_list_get(struct token_list *tl,int which,int excursion)
 struct token_list * init_token_list(void)
 {
     struct token_list *tmp=(struct token_list *)malloc(sizeof(struct token_list));
-    tmp->t=init_XTlist(100,sizeof(struct token_list));
+    tmp->t=init_XTlist(100,sizeof(struct token));
     return tmp;
 };
 int file_to_token_to_array(const char *file_name,struct token_list *tl)
@@ -430,6 +429,8 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
                     }
                 }
                 XTlist_add(tl->t,struct token,tmp);
+                printf("##%p-%s##\n",XTlist_get(tl->t,tl->t->len-1,struct token).is,XTlist_get(tl->t,tl->t->len-1,struct token).is);
+
                 if(tmp.type==I_RIGHT_BIGQ)
                 {
                     struct token tmp2;
