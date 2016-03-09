@@ -60,6 +60,7 @@ char *type_print[100] =
     "function",
     "float",
     "let",
+    "f: %",
 };
 
 struct tok_input
@@ -246,6 +247,7 @@ long int get_next_token(char *s,struct token *t)
         switch(*(s++))
         {
         case ';':
+        case '\n':
             t->type=I_END_LINE_F;
             break;
         case '+':
@@ -259,6 +261,9 @@ long int get_next_token(char *s,struct token *t)
             break;
         case '/':
             t->type=I_DIVIDE;
+            break;
+        case '%':
+            t->type=I_MOD;
             break;
         case '=':
             switch(*(s++))

@@ -62,6 +62,7 @@ struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table)
         case OP_DIVIDE:
         case OP_MULTIPLY:
         case OP_REDUCE:
+        case OP_MOD:
             {
                 struct XTtree *exp_l = XTlist_get(exp->child,0,struct XTtree *);
                 struct XTtree *exp_r = XTlist_get(exp->child,1,struct XTtree *);
@@ -81,6 +82,9 @@ struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table)
                     break;
                     case OP_DIVIDE:
                         tmp.u.int_value=tmp_l.u.int_value / tmp_r.u.int_value;
+                    break;
+                    case OP_MOD:
+                        tmp.u.int_value=tmp_l.u.int_value % tmp_r.u.int_value;
                     break;
                 }
             }

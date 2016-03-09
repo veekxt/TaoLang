@@ -38,6 +38,7 @@
 #define T_FUN 28
 #define I_FLOAT 29
 #define I_LET 30
+#define I_MOD 31
 
 struct token
 {

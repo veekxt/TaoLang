@@ -22,6 +22,7 @@ char *parser_node_type_comment[]={
 "-",
 "*",
 "/",
+"%",
 "<",
 ">",
 "<=",
@@ -210,6 +211,7 @@ struct XTtree * do_exp_pri(struct token_list *tl)
             {
                 case I_MULTIPLY:type=OP_MULTIPLY;break;
                 case I_DIVIDE:type=OP_DIVIDE;break;
+                case I_MOD:type=OP_MOD;break;
             }
             if(type!=UNKNOWN)
             {
