@@ -59,6 +59,7 @@ char *type_print[100] =
     "un_def",
     "function",
     "float",
+    "let",
 };
 
 struct tok_input
@@ -85,7 +86,15 @@ char * file_into_string(FILE *fp)
     fread(s,1,file_size,fp);
     return s;
 }
+void add_char_to_str(char **s,char ch)
+{
+    size_t len = strlen(*s);
+    *s = (char *)realloc(*s,sizeof(char)*len+1);
+    (*s)[len] = ch;
+    (*s)[len+1] = 0;
 
+
+}
 //判断字符是否是空白分隔符
 int is_white(char ch)
 {
@@ -300,6 +309,41 @@ long int get_next_token(char *s,struct token *t)
 
         case '"':
         {
+            char *buf = calloc(1,sizeof(char));
+            while(*s!='\0')
+            {
+                if(*s=='\\')
+                {
+                    if(*(s+1)=='n')
+                    {
+                        add_char_to_str(&buf,'\n');
+                        s+=2;
+                    }
+                    else if(*(s+1)=='"')
+                    {
+                        add_char_to_str(&buf,'\n');
+                        s+=2;
+                    }
+                    else
+                    {
+
+                    }
+                }else
+                {
+                    if(*s=='"')
+                    {
+                        s++;
+                        break;
+                    }
+                    else
+                    {
+                        add_char_to_str(&buf,*s++);
+                    }
+                }
+            }
+            t->is=buf;
+            t->type=I_STRING;
+            /*
             tok.start=s;
 
             while(!(*s=='"'&& !(*(s-1)=='\\')) || *s=='\0')
@@ -314,8 +358,9 @@ long int get_next_token(char *s,struct token *t)
             tok.buf=tmp;
             t->type=I_STRING;
             t->is=tmp;
-            break;
+            */
         }
+        break;
         case ',':
             t->type=I_COMMA;
             break;

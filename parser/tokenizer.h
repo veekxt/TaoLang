@@ -13,7 +13,6 @@
 #define I_STRING 3
 #define I_IDEN 4
 #define I_NUMBER 5
-#define I_FLOAT 29
 #define I_LEFT_BIGQ 6
 #define I_RIGHT_BIGQ 7
 #define I_LEFT_SMALLQ 8
@@ -37,6 +36,7 @@
 #define I_RETURN 26
 #define I_UNDEF 27
 #define T_FUN 28
+#define I_FLOAT 29
 #define I_LET 30
 
 struct token
