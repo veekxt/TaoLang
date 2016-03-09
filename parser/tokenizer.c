@@ -429,8 +429,6 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
                     }
                 }
                 XTlist_add(tl->t,struct token,tmp);
-                printf("##%p-%s##\n",XTlist_get(tl->t,tl->t->len-1,struct token).is,XTlist_get(tl->t,tl->t->len-1,struct token).is);
-
                 if(tmp.type==I_RIGHT_BIGQ)
                 {
                     struct token tmp2;
