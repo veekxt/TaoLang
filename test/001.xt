@@ -1,18 +1,6 @@
 //测试0.01：仅包含表达式，print函数，变量定义
 
-let var_1 = 23;
-let var_2 = 5%11;
-let var_3 = var_1 * var_2;
-print(5%3,"\n");
-print(var_1 + var_3,"\n"); //print "69"
+let tmp = 23
+let i = 23
 
-//测试作用域
-{
-    let var_1 =3;
-    print(var_1," ");
-}
-
-print(var_1," ");
-
-let var_9="test String";
-print(var_9);
+print("23*23 is",tmp * i)

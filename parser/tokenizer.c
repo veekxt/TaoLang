@@ -99,7 +99,7 @@ void add_char_to_str(char **s,char ch)
 //判断字符是否是空白分隔符
 int is_white(char ch)
 {
-    if(ch=='\n' || ch=='\t' || ch== ' ' || ch=='\r')
+    if(ch=='\t' || ch== ' ' || ch=='\r')
     {
         return 1;
     }
