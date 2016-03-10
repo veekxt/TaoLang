@@ -46,6 +46,7 @@
 struct token
 {
     int type;
+    int line;
     char *is;
 };
 
