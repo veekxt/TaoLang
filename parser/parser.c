@@ -11,6 +11,9 @@ char *parser_node_type_comment[]={
 "string",
 "if",
 "while",
+"break",
+"continue",
+"return",
 "let",
 "assign",
 "fun-call",
@@ -478,6 +481,20 @@ struct XTtree * do_stmt_specific(struct token_list *tl)
                 return do_let(tl);
             }
             break;
+        case I_BREAK:
+            {
+                tl->n++;//match break;
+                struct XTtree *break_tree = init_XTtree(0);
+                break_tree->tree_type = LOOP_BREAK;
+                return break_tree;
+            }
+        case I_CONTINUE:
+            {
+                tl->n++;//matchm continue;
+                struct XTtree *continue_tree = init_XTtree(0);
+                continue_tree->tree_type =LOOP_CONTINUE;
+                return continue_tree;
+            }
         default:
             return NULL;
             break;

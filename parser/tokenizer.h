@@ -40,6 +40,8 @@
 #define I_END_LINE_N 30
 #define I_TRUE 31
 #define I_FALSE 32
+#define I_BREAK 33
+#define I_CONTINUE 34
 
 struct token
 {

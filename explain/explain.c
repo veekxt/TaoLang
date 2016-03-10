@@ -136,12 +136,12 @@ struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table)
 每遇到新的作用域就建一个符号列表，并进入符号表栈
 离开作用域时出栈
 */
-int explain(struct XTtree *root,struct XTlist *symbol_table)
+stmt_result explain(struct XTtree *root,struct XTlist *symbol_table)
 {
     struct XTlist *list_var=init_XTlist(0,sizeof(struct xt_symbol *));//当前符号表
     XTlist_add(symbol_table,struct XTlist *,list_var);                  //当前符号表放在栈的最顶层
     //symbol_table->current+=1;                                       // 栈指针+1
-
+    stmt_result my_stmt_result = R_NORMAL;
     for(int i=0;i<root->child->len;i++)
     {
         struct XTtree *tmp = XTlist_get(root->child,i,struct XTtree *);
@@ -171,7 +171,7 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
         //语句块，递归调用
         case STMT:
             {
-                explain(tmp,symbol_table);
+                my_stmt_result = explain(tmp,symbol_table);
             }
             break;
         //单独的表达式，暂时不用
@@ -181,7 +181,7 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
         case OP_MULTIPLY:
         case OP_REDUCE:
             {
-               // struct xt_value target = cal_exp(tmp,symbol_table);
+                struct xt_value target = cal_exp(tmp,symbol_table);
             }
             break;
         //函数调用
@@ -207,10 +207,11 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
 
                 if(cal_bool_exp(bool_exp,symbol_table).u.bool_value != 0)
                 {
-                    explain(if_stmt,symbol_table);
+                    my_stmt_result = explain(if_stmt,symbol_table);
+
                 }else
                 {
-                    if(if_stmt_else != NULL) explain(if_stmt_else,symbol_table);
+                    if(if_stmt_else != NULL)my_stmt_result = explain(if_stmt_else,symbol_table);
                 }
             }
         break;
@@ -221,12 +222,29 @@ int explain(struct XTtree *root,struct XTlist *symbol_table)
                 struct XTtree * while_stmt=XTlist_get(tmp->child,1,struct XTtree *);
                 while(cal_bool_exp(bool_exp,symbol_table).u.bool_value != 0)
                 {
-                    explain(while_stmt,symbol_table);
+                    stmt_result r = explain(while_stmt,symbol_table);
+                    if(r==R_BREAK){break;}
+                    else if(r==R_CONTINUE)
+                    {
+                        continue;
+                    }
                 }
             }
         break;
+        case LOOP_BREAK:
+            {
+                return R_BREAK;
+            }
+        break;
+        case LOOP_CONTINUE:
+            {
+                return R_CONTINUE;
+            }
+        break;
         }
+        if(my_stmt_result == R_BREAK)return R_BREAK;
+        else if(my_stmt_result == R_CONTINUE)return R_CONTINUE;
     }
     XTlist_pop(symbol_table,struct XTlist *);
-    return 0;
+    return my_stmt_result;
 }

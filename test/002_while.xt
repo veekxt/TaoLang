@@ -3,6 +3,7 @@
 
 //计算1加到100的和
 let s=0;
+
 let i=0
 while(i<=100)
 {
@@ -11,15 +12,18 @@ while(i<=100)
 }
 
 print(s,"\n")
-i=0;
+i=1;
 
-//输出所有3的倍数
+//输出50内不是3的倍数,测试break和continue
 while(i<=100)
 {
+    if(i>50){break}
+    // print("#",i,"#\n")
     # let j=i%3;
     # comment
-    if(i % 3 == 0){
-        print(i," ")
+    if(i%3==0){i=i+1;continue;}
+    {
+        print(i,"\n")
     }
     i=i+1
 }

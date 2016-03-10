@@ -9,7 +9,7 @@
 int main(void)
 {
     struct token_list *tl=init_token_list();
-    file_to_token_to_array("test/002_while.xt",tl);
+    file_to_token_to_array("test/003_primer.xt",tl);
 
     puts("Token Stream:");
     for(int i=0; i<tl->t->len; i++)

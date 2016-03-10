@@ -4,6 +4,13 @@
 #include "../parser/parser.h"
 #include "../datastr/list.h"
 
+typedef enum {
+R_NORMAL,
+R_BREAK,
+R_CONTINUE,
+R_RETURN,
+}stmt_result;
+
 enum xt_value_type
 {
     XT_V_INT,
@@ -35,7 +42,7 @@ struct xt_function
     struct xt_value *args;
 };
 
-int explain(struct XTtree *,struct XTlist *);
+stmt_result explain(struct XTtree *,struct XTlist *);
 struct xt_value cal_exp(struct XTtree *exp,struct XTlist *symbol_table);
 struct xt_symbol *find_iden(const char *name,struct XTlist *symbol_table);
 #endif // EXPLAIN_H_INCLUDED
