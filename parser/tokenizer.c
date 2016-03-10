@@ -131,12 +131,13 @@ void print_token(struct token t)
     {
         is_tmp=type_print[t.type]+3;
     }
-    printf("%-20s %-20s\n",type_print[t.type],is_tmp);
+    printf("line %d ,%-10s %-20s\n",t.line,type_print[t.type],is_tmp);
 }
 
 //从s起始读取一个词素,返回读取的字符数
 long int get_next_token(char *s,struct token *t)
 {
+    static int line = 1;
     if(*s=='\0') return 0;
     int len_ch=0;
     int len_py=0;
@@ -154,7 +155,7 @@ long int get_next_token(char *s,struct token *t)
         {
             if(*(++s)=='/')
             {
-                for(; *s!='\n'; s++)
+                for(; *s!='\n'&& *s!=0; s++)
                 {
                     ;
                 }
@@ -164,6 +165,7 @@ long int get_next_token(char *s,struct token *t)
             {
                 for(++s;; ++s)
                 {
+                    if(*s=='\n')line++;
                     if(*s=='*' && *(s+1)=='/')
                     {
                         s=s+2;
@@ -252,9 +254,11 @@ long int get_next_token(char *s,struct token *t)
         switch(*(s++))
         {
         case ';':
-            //t->type=I_END_LINE_N;
+            t->type=I_END_LINE_F;
+        break;
         case '\n':
             t->type=I_END_LINE_F;
+            line++ ;
             break;
         case '+':
             t->type=I_ADD;
@@ -392,8 +396,11 @@ long int get_next_token(char *s,struct token *t)
         case ',':
             t->type=I_COMMA;
             break;
+        default:
+            t->type=I_UNDEF;
         }
     }
+    t->line = line;
     return s-s_start;
 }
 struct token *token_list_get(struct token_list *tl,int which,int excursion)
@@ -424,9 +431,14 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
         {
             int a=get_next_token(string_in,&tmp);
             string_in+=a;
-            if(a==0)break;
+            if(tmp.type==I_UNDEF)
+            {
+                printf("error : line %d,has unkonown token\n",tmp.line);
+                return -1;
+            }
             else
             {
+                if(a==0)break;
                 if(i>0)
                 {
                     if(tmp.type==I_END_LINE_F && XTlist_get(tl->t,i-1,struct token).type==I_END_LINE_F)
@@ -441,6 +453,7 @@ int file_to_token_to_array(const char *file_name,struct token_list *tl)
                     struct token tmp2;
                     tmp2.type=I_END_LINE_F;
                     tmp2.is="";
+                    tmp2.line = tmp.line;
                     XTlist_add(tl->t,struct token,tmp2);
                     i++;
                 }

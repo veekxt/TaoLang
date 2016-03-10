@@ -6,6 +6,8 @@
 #include "tools.h"
 #include "../datastr/list.h"
 
+int parser_suc = 1;
+
 char *parser_node_type_comment[]={
 "stmt",
 "string",

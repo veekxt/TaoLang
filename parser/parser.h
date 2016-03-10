@@ -31,6 +31,8 @@ EQAUL,
 UNKNOWN,
 };
 
+extern int parser_suc;
+
 struct XTtree
 {
     enum parser_node_type tree_type;
