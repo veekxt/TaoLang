@@ -228,9 +228,16 @@ long int get_next_token(char *s,struct token *t)
         {
             if(*s=='.' &&  is_float == 0)
             {
-                is_float = 1 ;
                 len_ch++;
                 s++;
+                if(*s>='0' && *s<='9')
+                {
+                    is_float = 1 ;
+                }else{
+                    t->line=line;
+                    t->type=I_UNDEF;
+                    return s-s_start;
+                };
             }
             else if(*s>='0' && *s<='9')
             {
