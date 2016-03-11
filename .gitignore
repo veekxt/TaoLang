@@ -3,3 +3,5 @@
 *.cbp
 *.depend
 *.layout
+bin*
+tmp*
