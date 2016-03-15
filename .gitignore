@@ -5,3 +5,5 @@
 *.layout
 bin*
 tmp*
+*.temp
+tao
