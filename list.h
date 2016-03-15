@@ -17,12 +17,14 @@ typedef struct Taolist_st{
 #define Taolist_get_addr(type,n,l)\
         (((type *)l->data)+(n))
 
+//更新一个值
 #define Taolist_update(type,n,l,dat)\
     do{\
         type *not_use_tmp=(((type *)(l)->data)+(n));\
         *(not_use_tmp) = (dat);\
     }while(0)
 
+//在尾部添加元素，空间不够时自动扩充空间为原来的3/2
 #define Taolist_add(type,l,dat)\
     do{\
         if(l->len+1>l->max_len)\
@@ -36,11 +38,45 @@ typedef struct Taolist_st{
         l->len++;\
     }while(0)
 
+//删除一个元素，但是并不缩小空间
+#define Taolist_del(type,n,l)\
+    do{\
+        if((n)<0 || (n)>=l->len)break;\
+        for(size_t i = (n)+1;i<l->len;i++)\
+        {\
+            type tmp = Taolist_get(type,i,l);\
+            Taolist_update(type,i-1,l,tmp);\
+        }\
+        l->len--;\
+    }while(0)
+
+//删除最后一个元素，但是并不缩小空间
 #define Taolist_pop(l)\
     do{\
         l->len--;\
     }while(0)
 
+//删除所有元素，但是并不释放空间
+#define Taolist_clear(l)\
+    do{\
+        l->len=0;\
+    }while(0)
+
+//交换两个位置的数据
+#define Taolist_swap(type,n1,n2,l)\
+    do{\
+        type tmp1 = Taolist_get(type,n1,l);\
+        type tmp2 = Taolist_get(type,n2,l);\
+        Taolist_update(type,n1,l,tmp2);\
+        Taolist_update(type,n2,l,tmp1);\
+    }while(0)
+
+
+//克隆一个列表
+Taolist * Taolist_clone_fun(const Taolist *src,int data_len);
+#define Taolist_clone(l,type) Taolist_clone_fun(l,sizeof(type))
+
+//初始化列表一个
 Taolist * init_Taolist_fun(int len,int data_len);
 #define Taolist_init(type,init_len) init_Taolist_fun(init_len,sizeof(type))
 
