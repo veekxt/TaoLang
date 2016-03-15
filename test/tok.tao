@@ -1,0 +1,27 @@
+/*
+*    @test TaoLang tokenizer
+*    @veekxt
+*     用于测试tokenizer，不要试图了解其中逻辑,语法也有错误
+*/
+
+let we=45;
+let our = 59.78.str();
+
+while(we >= 45)
+{
+    print("we" is bigger than 45);
+    we-=5
+    let rt= 8
+    if(rt < xx(7))
+    {
+        print("mycat")
+    }
+    elif{
+        let list = [1,2,3,4,5,6,7,8,9]
+        let v = 98;
+        for(x => list){print("sd",x,"\n")}
+    }
+    else{
+        print("heheda");    
+    }
+}
