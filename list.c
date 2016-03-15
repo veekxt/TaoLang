@@ -42,17 +42,18 @@ void test_Taolist()
     Taolist_add(int,intl,3);
     Taolist_add(int,intl,4);
     Taolist_add(int,intl,5);
-
+    // 1 2 3 4 5
     Taolist_update(int,2,intl,99);
-
+    // 1 2 99 4 5
     Taolist_del(int,1,intl);
     Taolist_del(int,9,intl);//索引过大无效
-
+    // 1 99 4 5
     puts("clone:");
     Taolist *e = Taolist_clone(intl,int);
 
-    Taolist_add(int,e,777);
-    Taolist_swap(int,0,3,e);
+    Taolist_add(int,e,777); // 1 99 4 5 777
+    Taolist_swap(int,0,3,e);// 5 99 4 1 777
+    Taolist_inser(int,3,888,e);// 5 99 4 888 1 777
 
     for(int i=0;i<e->len;i++){
         printf("%d\n",Taolist_get(int,i,e));

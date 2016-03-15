@@ -30,13 +30,34 @@ typedef struct Taolist_st{
         if(l->len+1>l->max_len)\
         {\
             l->data=realloc(l->data,sizeof(type)*l->max_len+(l->max_len*3/2)*sizeof(type));\
-            l->max_len+=100;\
+            l->max_len+=l->max_len*3/2;\
         }\
         else ; \
         type *not_use_tmp=(((type *)l->data)+l->len);\
         *(not_use_tmp)=(dat);\
         l->len++;\
     }while(0)
+
+//在中间插入一个元素
+#define Taolist_inser(type,n,dat,l)\
+    do{\
+        if(l->len+1>l->max_len)\
+        {\
+            l->data=realloc(l->data,sizeof(type)*l->max_len+(l->max_len*3/2)*sizeof(type));\
+            l->max_len+=l->max_len*3/2;\
+        }\
+        else ;\
+        for(size_t i =l->len-1;i>=n;i--)\
+        {\
+            type tmp = Taolist_get(type,i,l);\
+            Taolist_update(type,i+1,l,tmp);\
+        }\
+        type *not_use_tmp=(((type *)l->data)+n);\
+        *(not_use_tmp)=(dat);\
+        l->len++;\
+    }\
+    while(0)
+
 
 //删除一个元素，但是并不缩小空间
 #define Taolist_del(type,n,l)\

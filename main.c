@@ -5,8 +5,8 @@
 
 int main()
 {
-    Taolist *x = file_to_token_list("test/primer.tao");
-    if(x->state!=-1)print_token_l(x);
-    //test_Taolist();
+    //Taolist *x = file_to_token_list("test/primer.tao");
+    //if(x->state!=-1)print_token_l(x);
+    test_Taolist();
     return 0;
 }
