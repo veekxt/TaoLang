@@ -7,7 +7,7 @@ typedef struct Taolist_st{
     size_t cur;
     size_t max_len;
     int state;
-    void *data;//存放具体对象指针的数组
+    void *data;//存放具体数据的数组
 }Taolist;
 
 #define Taolist_get(type,n,l)\
