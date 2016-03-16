@@ -465,7 +465,7 @@ Taolist * file_to_token_list(const char *fname)
 {
     FILE *fp =fopen(fname,"rb");
 
-    if(fp==NULL){printf("error: Can't open file!\n");return NULL;}
+    if(fp==NULL){printf("error: Can't open file!\n");exit(0);}
 
     file_string *fs = file_into_string(fp);
     Taolist *token_l = Taolist_init(token,300);

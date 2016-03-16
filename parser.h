@@ -101,7 +101,8 @@ typedef enum
     A_ASSIGN,       // =
     A_ADD,          // +
     A_RED,          // -
-	A_MINUS,
+    A_MINUS,
+    A_TWOSTAR,
     A_MUL,          // *
     A_DIV,          // /
     A_MOD,          // %
@@ -158,6 +159,8 @@ Taolist * file_to_token_list(const char *fname);
 token * get_token(int n,int i,Taolist *l);
 
 void AST_print(AST *t,int where_i);
+
+AST * build_root_stmt(Taolist *t);
 
 AST * build_exp(Taolist *t);
 AST * build_bool_exp(Taolist *t);

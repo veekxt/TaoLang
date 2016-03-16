@@ -3,14 +3,31 @@
 #include "parser.h"
 #include "list.h"
 #include "parser_comment.h"
+/**
+宏，为一个父节点添加一个子节点
+使用return方便错误处理
+*/
+#define add_child_node(father,son)\
+do{\
+    AST *tmp = son;\
+    if(tmp == NULL){AST_free(father);return NULL;}\
+    Taolist_add(AST *,father->child,tmp);\
+}while(0);
 
 #define match_n(t,n) (t)->cur+=(n);
 
-void syntax_error_unex(token *cur)
+void AST_free(AST *a)
+{
+    Taolist_kill(a->child);
+    free(a);
+}
+
+int syntax_error_unex(token *cur)
 {
     printf("line %d ,syntax error :unexpected token (%s):%s\n",\
                    cur->line,token_name[cur->type],cur->content==NULL?"":cur->content);
-    exit(0);
+    //exit(0);
+    return 0;
 }
 
 int match(token_type type,Taolist *l)
@@ -48,6 +65,7 @@ int make_ast_type(token *t,AST *a)
         case T_NOTEQUAL:    a->type = A_NOTEQ;break;
         case T_AND:    a->type = A_AND;break;
         case T_OR:    a->type = A_OR;break;
+        case T_TWOSTAR:    a->type = A_TWOSTAR;break;
         default:return 0;
     }
     return 1;
@@ -115,6 +133,11 @@ AST * AST_init(int n)
     return ast;
 }
 
+AST * build_root_stmt(Taolist *t)
+{
+    return build_exp(t);
+}
+
 AST * build_exp(Taolist *t)
 {
     //puts("build_bool_exp");
@@ -128,8 +151,8 @@ AST * build_exp(Taolist *t)
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
-            Taolist_add(AST *,now->child,root);
-            Taolist_add(AST *,now->child,build_bool_exp(t));
+            add_child_node(now,root);
+            add_child_node(now,build_bool_exp(t));
             root = now;
         }else
         {
@@ -152,8 +175,8 @@ AST * build_bool_exp(Taolist *t)
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
-            Taolist_add(AST *,now->child,root);
-            Taolist_add(AST *,now->child,build_com_exp(t));
+            add_child_node(now,root);
+            add_child_node(now,build_com_exp(t));
             root = now;
         }else
         {
@@ -177,8 +200,8 @@ AST * build_com_exp(Taolist *t)
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
-            Taolist_add(AST *,now->child,root);
-            Taolist_add(AST *,now->child,build_num_exp(t));
+            add_child_node(now,root);
+            add_child_node(now,build_num_exp(t));
             root = now;
         }else
         {
@@ -201,8 +224,8 @@ AST * build_num_exp(Taolist *t)
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
-            Taolist_add(AST *,now->child,root);
-            Taolist_add(AST *,now->child,build_sin_exp(t));
+            add_child_node(now,root);
+            add_child_node(now,build_sin_exp(t));
             root = now;
         }else
         {
@@ -221,7 +244,7 @@ AST * build_sin_exp(Taolist *t)
         match_n(t,1);
         AST * root = AST_init(1);
         root->type = cur->type==T_NOT?A_NOT:A_MINUS;
-        Taolist_add(AST *,root->child,build_top_exp(t));
+        add_child_node(root,build_top_exp(t));
         return root;
     }else
     {
@@ -242,8 +265,8 @@ AST * build_top_exp(Taolist *t)
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
-            Taolist_add(AST *,now->child,root);
-            Taolist_add(AST *,now->child,build_call_exp(t));
+            add_child_node(now,root);
+            add_child_node(now,build_call_exp(t));
             root = now;
         }else
         {
@@ -277,7 +300,7 @@ AST * build_start_call_exp(Taolist *t)
         {
             match_n(t,1);
             root = build_exp(t);
-            match(T_RPAR,t);
+            if(!match(T_RPAR,t))return NULL;
         }
         break;
         default:
@@ -319,7 +342,7 @@ AST * build_fun_exp(Taolist *t)
     token *cur = get_token(0,0,t);
     root->content = cur->content;
     match_n(t,2);
-    Taolist_add(AST*,root->child,build_argv_exp(t));
+    add_child_node(root,build_argv_exp(t));
     cur = get_token(0,0,t);
     match(T_RPAR,t);
     return root;
@@ -330,14 +353,14 @@ AST * build_argv_exp(Taolist *t)
     //puts("build_argv_exp");
     AST *root = AST_init(0);
     root ->type = A_ARGV;
-    Taolist_add(AST *,root->child,build_exp(t));
+    add_child_node(root,build_exp(t));
     while(1)
     {
         token *cur = get_token(0,0,t);
         if(cur->type == T_COMMA)
         {
             match_n(t,1);
-            Taolist_add(AST *,root->child,build_exp(t));
+            add_child_node(root,build_exp(t));
         }else
         {
             break;

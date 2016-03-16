@@ -10,7 +10,7 @@ int main()
     puts("token:");
     if(x!=NULL)print_token_l(x);
     puts("\nAST:");
-    AST *A = build_exp(x);
+    AST *A = build_root_stmt(x);
     if(A!=NULL)AST_print(A,0);
     return 0;
 }
