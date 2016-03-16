@@ -12,7 +12,12 @@ Taolist * init_Taolist_fun(int len,int data_len)
     s->cur=0;//当前位置
     s->status=0;//状态，保留
     s->max_len=len;//最大长度
-    s->data=(len<=0 ? NULL:malloc(data_len*len));
+    if(len <= 0){
+        s->data = malloc(data_len);
+        s->max_len = 1;
+    }else{
+        s->data=malloc(data_len*len);
+    }
     return s;
 }
 

@@ -9,6 +9,21 @@
 
 typedef enum
 {
+    OP0,
+    OP1=10,
+    OP2,
+    OP3,
+    OP4,
+    OP5,
+    OP6,
+    OP7,
+    OP8,
+    OP9,
+    OP10,
+}priority;
+
+typedef enum
+{
     T_ERROR =1,
     T_INT,          // 89
     T_FLOAT,        // 3.14
@@ -67,22 +82,26 @@ typedef enum
 
 typedef enum
 {
-    A_ERROR = 1,
+    A_NIL = 1,
+    A_ERROR,
     A_LET,          // let
     A_IF,           // if
     A_WHILE,        // while
     A_FOR,          // for
-    A_BOOL_EXP,     // bool表达式
-    A_NUM_EXP,      // 数值表达式
+    //A_BOOL_EXP,     // bool表达式
+    A_EXP,      // 数值表达式
     A_RTN,          // return
     A_CTN,          // continue
     A_BRK,          // break
     A_TRY,          // try-catch
     A_INT,          // int
     A_FLOAT,        // float
+    A_IDEN,
+    A_VISIT,
     A_ASSIGN,       // =
     A_ADD,          // +
     A_RED,          // -
+	A_MINUS,
     A_MUL,          // *
     A_DIV,          // /
     A_MOD,          // %
@@ -90,16 +109,22 @@ typedef enum
     A_BIGEREQ,      // >=
     A_SMALLER,      // <
     A_SMALLEREQ,    // <=
+    A_NOTEQ,
+    A_NOT,
     A_EQUAL,        // ==
+    A_OR,        // or
+    A_AND,        // and
     A_FUNCALL,      // print();
     A_FUNDEF,       // def
+    A_ARGV,
 }AST_type;
 
 typedef struct
 {
-    token_type type;
-    int line;
-    char *content;
+    token_type type;//token类型
+    priority pri;  //优先级或者分类，语法分析会用到
+    int line;       //行号，错误提示
+    char *content;  //内容
 } token;
 
 typedef struct
@@ -109,7 +134,6 @@ typedef struct
     long int line;
     char str[0];
 } file_string;
-
 
 typedef struct
 {
@@ -130,4 +154,16 @@ void print_token_l(Taolist * l);
 Taolist * file_to_token_list(const char *fname);
 token * get_token(int n,int i,Taolist *l);
 
+void AST_print(AST *t,int where_i);
+
+AST * build_exp(Taolist *t);
+AST * build_bool_exp(Taolist *t);
+AST * build_com_exp(Taolist *t);
+AST * build_num_exp(Taolist *t);
+AST * build_sin_exp(Taolist *t);
+AST * build_top_exp(Taolist *t);
+AST * build_start_call_exp(Taolist *t);
+AST * build_call_exp(Taolist *t);
+AST * build_fun_exp(Taolist *t);
+AST * build_argv_exp(Taolist *t);
 #endif // PARSER_H_INCLUDED

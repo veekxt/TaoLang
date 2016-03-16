@@ -5,7 +5,7 @@
 let j= 3;/*
 测试注释
 */
-while(j <= 100)
+while(j <= 100.tostr().toint())
 {
     let i = 2
     while(i<j)

@@ -213,6 +213,7 @@ void jmp_useless(file_string *fs)
             }
             else
             {
+                s--;
                 break;
             }
         }
@@ -243,7 +244,8 @@ token get_a_token(file_string *fs)
 {
     jmp_useless(fs);
     char *s=fs->cur;
-    token target={T_ERROR,fs->line,NULL};
+    token target={T_ERROR,OP0,fs->line,NULL};
+    priority pri = OP0;
     if(*s=='\0')
     {
         target.type=T_END;
@@ -259,6 +261,7 @@ token get_a_token(file_string *fs)
         int len_str = (s - fs->cur) / sizeof(char);
         char *content = malloc(sizeof(char)*len_str+1);
         memcpy(content,fs->cur,len_str * sizeof(char));
+        content[len_str] = 0;
         target.content = content;
         target.type = which_keyword(content);
     }
@@ -277,7 +280,7 @@ token get_a_token(file_string *fs)
                     is_float = 1 ;
                 }else{
                     //todo 回退"."
-                    //return target;
+                    s--;
                     break;
                 };
             }
@@ -293,6 +296,7 @@ token get_a_token(file_string *fs)
         char *content = malloc(sizeof(char)*len_str+1);
         memcpy(content,fs->cur,len_str * sizeof(char));
         target.content = content;
+        content[len_str] = 0;
         target.type = is_float==0?T_INT:T_FLOAT;
     }
     //字符串
@@ -378,6 +382,7 @@ token get_a_token(file_string *fs)
                     {
                         case '=':
                             target.type = T_EQUAL;
+                            pri = OP7;
                         break;
                         case '>':
                             target.type = T_TO;
@@ -387,7 +392,7 @@ token get_a_token(file_string *fs)
                     }
                 }
             break;
-            case '.':target.type = T_VISIT;
+            case '.':target.type = T_VISIT;pri=OP3;
             break;
             case ':':target.type = T_SVISIT;
             break;
@@ -414,35 +419,39 @@ token get_a_token(file_string *fs)
             break;
             case '}':target.type = T_RBRACE;
             break;
-            case '+':target.type = T_ADD;
+            case '+':target.type = T_ADD;pri=OP6;
             break;
-            case '-':target.type = T_MINUS;
+            case '-':target.type = T_MINUS;pri=OP6;
             break;
             case '*':
                 {
                     if(*(s++)=='*')
                     {
                         target.type = T_TWOSTAR;
+                        pri=OP5;
                     }else
                     {
                         s--;
                         target.type = T_STAR;
+                        pri=OP5;
                     }
                 }
             break;
-            case '/':target.type = T_SLASH;
+            case '/':target.type = T_SLASH;pri=OP5;
             break;
-            case '%':target.type = T_PERSENT;
+            case '%':target.type = T_PERSENT;pri=OP5;
             break;
             case '<':
                 {
                     if(*(s++)=='=')
                     {
                         target.type = T_LESSEQ;
+                        pri=OP7;
                     }else
                     {
                         s--;
                         target.type = T_LESS;
+                        pri=OP7;
                     }
                 }
             break;
@@ -451,10 +460,12 @@ token get_a_token(file_string *fs)
                     if(*(s++)=='=')
                     {
                         target.type = T_MOREEQ;
+                        pri=OP7;
                     }else
                     {
                         s--;
                         target.type = T_MORE;
+                        pri=OP7;
                     }
                 }
             break;
@@ -463,10 +474,12 @@ token get_a_token(file_string *fs)
                     if(*(s++)=='=')
                     {
                         target.type = T_NOTEQUAL;
+                        pri=OP7;
                     }else
                     {
                         s--;
                         target.type = T_NOT;
+                        pri=OP4;
                     }
                 }
             break;
@@ -475,6 +488,7 @@ token get_a_token(file_string *fs)
                     if(*(s++)=='|')
                     {
                         target.type = T_OR;
+                        pri=OP8;
                     }else
                     {
                         s--;
@@ -484,9 +498,10 @@ token get_a_token(file_string *fs)
             break;
             case '&':
                 {
-                    if(*(s++)=='=')
+                    if(*(s++)=='&')
                     {
                         target.type = T_AND;
+                        pri=OP8;
                     }else
                     {
                         s--;
@@ -498,7 +513,8 @@ token get_a_token(file_string *fs)
         }
     }
     fs->cur = s;
-    target.line=fs->line;
+    target.line = fs->line;
+    target.pri = pri;
     return target;
 }
 
@@ -553,6 +569,7 @@ void print_token_l(Taolist * l)
         if(x->type==T_END){print_token(x);break;}
         print_token(x);
     }
+    l->cur=0;
 }
 
 //获取一个token，n超前前几个位置，i内部指针偏移多少
