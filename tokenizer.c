@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "parser.h"
+#include "list.h"
 #define isalpha_(c) (isalpha(c) || (c)=='_')
 
 //关键字对比
@@ -535,6 +536,11 @@ Taolist * file_to_token_list(const char *fname)
              token_l->status = -1;
          }
          if(tmp.type==T_END)return token_l;
+    }
+    if(token_l->status == -1)
+    {
+        Taolist_kill(token_l);
+        return NULL;
     }
     return token_l;
 }

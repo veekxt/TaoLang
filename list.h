@@ -102,5 +102,6 @@ Taolist * init_Taolist_fun(int len,int data_len);
 #define Taolist_init(type,init_len) init_Taolist_fun(init_len,sizeof(type))
 
 void test_Taolist();
+void Taolist_kill(Taolist *l);
 
 #endif // LIST_H_INCLUDED
