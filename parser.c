@@ -2,16 +2,28 @@
 #include <stdlib.h>
 #include "parser.h"
 #include "list.h"
+#include "parser_comment.h"
+
 #define match_n(t,n) (t)->cur+=(n);
+
+void syntax_error_unex(token *cur)
+{
+    printf("line %d ,syntax error :unexpected token (%s):%s\n",\
+                   cur->line,token_name[cur->type],cur->content==NULL?"":cur->content);
+    exit(0);
+}
 
 int match(token_type type,Taolist *l)
 {
-    if(get_token(0,0,l)->type == type)
+    token *cur = get_token(0,0,l);
+    if(cur->type == type)
     {
         l->cur++;
         return 1;
+    }else
+    {
+        syntax_error_unex(cur);
     }
-    //todo:错误处理
     return 0;
 }
 
@@ -44,46 +56,6 @@ int make_ast_type(token *t,AST *a)
 void AST_print(AST *t,int where_i)
 {
     if(t==NULL)return;
-
-    char *AST_comment[100]=
-    {
-        "",
-        "nil",
-        "error",
-        "let",
-        "if",
-        "while",
-        "for",
-        "exp",
-        "return",
-        "continue",
-        "break",
-        "try",
-        "int",
-        "float",
-        "iden",
-        "visit.",
-        "=",
-        "+",
-        "-",
-        "(-)",
-        "*",
-        "/",
-        "%",
-        ">",
-        ">=",
-        "<",
-        "<=",
-        "!=",
-        "not",
-        "==",
-        "||",
-        "&&",
-        "func",
-        "def",
-        "args",
-    };
-
     if(t->content==NULL || strlen(t->content)==0)
     {
         printf("%s",AST_comment[t->type]);
@@ -308,7 +280,9 @@ AST * build_start_call_exp(Taolist *t)
             match(T_RPAR,t);
         }
         break;
-        default:;
+        default:
+            syntax_error_unex(cur);
+        return NULL;
     }
     return root;
 }
@@ -347,20 +321,7 @@ AST * build_fun_exp(Taolist *t)
     match_n(t,2);
     Taolist_add(AST*,root->child,build_argv_exp(t));
     cur = get_token(0,0,t);
-
-    switch(cur->type)
-    {
-        case T_RPAR:
-        {
-            match_n(t,1);
-        }
-        break;
-        default:
-        {
-            //错误：缺少右括号
-        }
-        break;
-    }
+    match(T_RPAR,t);
     return root;
 }
 

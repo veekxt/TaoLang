@@ -119,6 +119,9 @@ typedef enum
     A_ARGV,
 }AST_type;
 
+extern char *AST_comment[];
+extern char *token_name[];
+
 typedef struct
 {
     token_type type;//token类型
