@@ -6,6 +6,6 @@
 int main()
 {
     Taolist *x = file_to_token_list("test/primer.tao");
-    if(x->state!=-1)print_token_l(x);
+    if(x->status!=-1)print_token_l(x);
     return 0;
 }

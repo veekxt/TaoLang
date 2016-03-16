@@ -532,7 +532,7 @@ Taolist * file_to_token_list(const char *fname)
          if(tmp.type==T_ERROR)
          {
              printf("error: Unkonwn token on line %d\n",tmp.line);
-             token_l->state = -1;
+             token_l->status = -1;
          }
          if(tmp.type==T_END)return token_l;
     }

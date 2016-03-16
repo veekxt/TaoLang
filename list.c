@@ -10,7 +10,7 @@ Taolist * init_Taolist_fun(int len,int data_len)
     Taolist *s = (Taolist *)malloc(sizeof(Taolist));
     s->len=0;//当前使用的长度
     s->cur=0;//当前位置
-    s->state=0;//状态，保留
+    s->status=0;//状态，保留
     s->max_len=len;//最大长度
     s->data=(len<=0 ? NULL:malloc(data_len*len));
     return s;
@@ -21,7 +21,7 @@ Taolist * Taolist_clone_fun(const Taolist *src,int data_len)
     Taolist *s = (Taolist *)malloc(sizeof(Taolist));
     s->len=src->len;
     s->cur=src->cur;
-    s->state=src->state;
+    s->status=src->status;
     s->max_len=src->max_len;
     s->data=malloc(data_len*src->max_len);
     s->data=memcpy(s->data, src->data, src->max_len * data_len);

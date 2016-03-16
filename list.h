@@ -6,7 +6,7 @@ typedef struct Taolist_st{
     size_t len;
     size_t cur;
     size_t max_len;
-    int state;
+    int status;
     void *data;//存放具体数据的数组
 }Taolist;
 
