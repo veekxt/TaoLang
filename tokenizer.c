@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "parser.h"
+#define isalpha_(c) (isalpha(c) || (c)=='_')
 
 //关键字对比
 token_type which_keyword(const char *s)
@@ -247,7 +248,7 @@ token get_a_token(file_string *fs)
         target.type=T_END;
     }
     //标识符或关键字
-    else if(isalpha(*s))
+    else if(isalpha_(*s))
     {
         s++;
         while(isalnum(*s))
@@ -540,9 +541,18 @@ Taolist * file_to_token_list(const char *fname)
 
 void print_token_l(Taolist * l)
 {
-    for(int i=0;i<l->len;i++){
-        print_token(Taolist_get_addr(token,i,l));
+    while(1)
+    {
+        token *x = get_token(0,1,l);
+        if(x->type==T_END){print_token(x);break;}
+        print_token(x);
     }
 }
 
-
+//获取一个token，n超前前几个位置，i内部指针偏移多少
+token * get_token(int n,int i,Taolist *l)
+{
+    token *tmp = Taolist_get_addr(token,l->cur+n,l);
+    l->cur+=i;
+    return tmp;
+}

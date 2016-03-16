@@ -64,6 +64,37 @@ typedef enum
     T_END,          // file end
 } token_type;
 
+
+typedef enum
+{
+    A_ERROR = 1,
+    A_LET,          // let
+    A_IF,           // if
+    A_WHILE,        // while
+    A_FOR,          // for
+    A_BOOL_EXP,     // bool表达式
+    A_NUM_EXP,      // 数值表达式
+    A_RTN,          // return
+    A_CTN,          // continue
+    A_BRK,          // break
+    A_TRY,          // try-catch
+    A_INT,          // int
+    A_FLOAT,        // float
+    A_ASSIGN,       // =
+    A_ADD,          // +
+    A_RED,          // -
+    A_MUL,          // *
+    A_DIV,          // /
+    A_MOD,          // %
+    A_BIGER,        // >
+    A_BIGEREQ,      // >=
+    A_SMALLER,      // <
+    A_SMALLEREQ,    // <=
+    A_EQUAL,        // ==
+    A_FUNCALL,      // print();
+    A_FUNDEF,       // def
+}AST_type;
+
 typedef struct
 {
     token_type type;
@@ -79,6 +110,15 @@ typedef struct
     char str[0];
 } file_string;
 
+
+typedef struct
+{
+    AST_type type;
+    char *content;
+    Taolist *child;
+}AST;
+
+
 token_type which_keyword(const char *);
 void print_token(token *);
 file_string * file_into_string(FILE *fp);
@@ -88,5 +128,6 @@ token get_a_token(file_string *fs);
 void add_char_to_str(char **s,char ch);
 void print_token_l(Taolist * l);
 Taolist * file_to_token_list(const char *fname);
+token * get_token(int n,int i,Taolist *l);
 
 #endif // PARSER_H_INCLUDED
