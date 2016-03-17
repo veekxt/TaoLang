@@ -178,7 +178,7 @@ void AST_print(AST *t,int where_i,int);
 void AST_free(AST *a);
 void goto_next_stmt(Taolist *t);
 
-AST * build_root_stmt(Taolist *t);
+AST * build_root_stmt(Taolist *t,int);
 AST * build_stmt(Taolist *t);
 AST * build_let_stmt(Taolist *t);
 AST * build_if_stmt(Taolist *t);

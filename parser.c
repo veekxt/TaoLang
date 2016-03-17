@@ -31,8 +31,6 @@ do{\
 #define match_n(t,n) (t)->cur+=(n);
 parser_status PARSER_STATUS=
 {
-    IN_ROOT,
-    IN_ROOT,
     1,
 };
 
@@ -223,7 +221,7 @@ void goto_next_stmt(Taolist *t)
     }
 }
 
-AST * build_root_stmt(Taolist *t)
+AST * build_root_stmt(Taolist *t,int is_inline)
 {
     del_void_token(t);
     AST *root = AST_init(0);
@@ -231,6 +229,7 @@ AST * build_root_stmt(Taolist *t)
     AST *tmp = build_stmt(t);
     Taolist_add(AST*,root->child,tmp);
     token *cur=NULL;
+
     for(;;)
     {
         cur = get_token(0,0,t);
@@ -239,6 +238,7 @@ AST * build_root_stmt(Taolist *t)
         case T_SEMI_N:
             match_n(t,1);
             cur = get_token(0,0,t);
+            if(is_inline && cur->type==T_SEMI)return root;
             tmp = build_stmt(t);
             if(tmp==NULL)
             {
@@ -249,47 +249,8 @@ AST * build_root_stmt(Taolist *t)
             break;
         case T_END:
             return root;
-        default:
-        {
-            syntax_error_unex(cur);
-            goto_next_stmt(t);
-        }
-        }
-    }
-    return root;
-}
-
-AST * build_inline_stmt(Taolist *t)
-{
-    del_void_token(t);
-    AST *root = AST_init(0);
-    root->type = A_STMT;
-    AST *tmp = build_stmt(t);
-    Taolist_add(AST*,root->child,tmp);
-    token *cur=NULL;
-
-    for(;;)
-    {
-        cur = get_token(0,0,t);
-        switch(cur->type)
-        {
         case T_SEMI:
-            return root;
-        break;
-        case T_SEMI_N:
-            match_n(t,1);
-            cur = get_token(0,0,t);
-            if(cur->type==T_SEMI)return root;
-            tmp = build_stmt(t);
-            if(tmp==NULL)
-            {
-                goto_next_stmt(t);
-                continue;
-            }
-            Taolist_add(AST*,root->child,tmp);
-            break;
-        case T_END:
-            return root;
+            if(is_inline)return root;
         default:
         {
             syntax_error_unex(cur);
@@ -375,7 +336,7 @@ AST * build_if_stmt(Taolist *t)
     del_void_token(t);
     match(T_SVISIT,t,root);
 
-    add_child_node(root,build_inline_stmt(t));
+    add_child_node(root,build_root_stmt(t,1));
     match(T_SEMI,t,root);
     //del_void_token(t);
     //token *cur = get_token(0,0,t);
