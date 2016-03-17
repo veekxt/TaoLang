@@ -4,8 +4,8 @@
 #include "list.h"
 #include "parser_comment.h"
 /**
-å®ï¼Œä¸ºä¸€ä¸ªçˆ¶èŠ‚ç‚¹æ·»åŠ ä¸€ä¸ªå­èŠ‚ç‚¹
-ä½¿ç”¨returnæ–¹ä¾¿é”™è¯¯å¤„ç†
+ºê£¬ÎªÒ»¸ö¸¸½ÚµãÌí¼ÓÒ»¸ö×Ó½Úµã
+Ê¹ÓÃreturn·½±ã´íÎó´¦Àí
 */
 #define add_child_node(father,son)\
 do{\
@@ -146,37 +146,37 @@ void AST_print(AST *t,int where_i,int has_pre)
 
 /***
 
-è¡¨è¾¾å¼ï¼Œå¸¦ä¼˜å…ˆçº§
-å’Œ build_* å‡½æ•°ç›¸å¯¹åº”
-è¿™æ ·è™½ç„¶ä¼šå…è®¸ä¸€äº›ä¸åˆè¯­ä¹‰è¯­æ³•ï¼Œä½†æ˜¯è¯­ä¹‰åˆ†æžé˜¶æ®µå¯ä»¥å¤„ç†
+±í´ïÊ½£¬´øÓÅÏÈ¼¶
+ºÍ build_* º¯ÊýÏà¶ÔÓ¦
+ÕâÑùËäÈ»»áÔÊÐíÒ»Ð©²»ºÏÓïÒåÓï·¨£¬µ«ÊÇÓïÒå·ÖÎö½×¶Î¿ÉÒÔ´¦Àí
 
 
-exp ::=         bool_exp {op8 bool_exp}               // é€»è¾‘ä¸Žæˆ–
-bool_exp ::=    com_exp  {op7 com_exp}         //æ¯”è¾ƒè¿ç®—
-com_exp ::=     num_exp  {op6 num_exp}      //åŠ æˆ–å‡
-num_exp ::=     sin_exp{op5 sin_exp}   //ä¹˜æˆ–é™¤
-sin_exp ::=   [ op4 ] top_call_exp               //å•ç›®è¿ç®—
-top_call_exp ::= start_call_exp {OP3 call_exp}   //æœ€é«˜ä¼˜å…ˆçº§çš„è¿ç®—ï¼Œcall_exp
+exp ::=         bool_exp {op8 bool_exp}               // Âß¼­Óë»ò
+bool_exp ::=    com_exp  {op7 com_exp}         //±È½ÏÔËËã
+com_exp ::=     num_exp  {op6 num_exp}      //¼Ó»ò¼õ
+num_exp ::=     sin_exp{op5 sin_exp}   //³Ë»ò³ý
+sin_exp ::=   [ op4 ] top_call_exp               //µ¥Ä¿ÔËËã
+top_call_exp ::= start_call_exp {OP3 call_exp}   //×î¸ßÓÅÏÈ¼¶µÄÔËËã£¬call_exp
 
 start_call_exp ::=  call_exp
-                | "(" exp ")"                   //æ‹¬å·ä¼˜å…ˆæœ€é«˜
-                | num                           //æ•°å­—å­—é¢é‡
+                | "(" exp ")"                   //À¨ºÅÓÅÏÈ×î¸ß
+                | num                           //Êý×Ö×ÖÃæÁ¿
                 | float
-                | string                        //å­—ç¬¦ä¸²å­—é¢é‡
+                | string                        //×Ö·û´®×ÖÃæÁ¿
 
-call_exp ::= iden                //å±žæ€§è°ƒç”¨
-            | fun              //æœ€ç®€å‡½æ•°è°ƒç”¨ï¼Œå¦‚ print(1,2,3)
+call_exp ::= iden                //ÊôÐÔµ÷ÓÃ
+            | fun              //×î¼òº¯Êýµ÷ÓÃ£¬Èç print(1,2,3)
 
-fun ::= iden "(" argv ")"  //æœ€ç®€å‡½æ•°è°ƒç”¨ï¼Œå¦‚ print(1,2,3)
-argv ::= exp {"," exp}           //å‚æ•°åˆ—è¡¨
+fun ::= iden "(" argv ")"  //×î¼òº¯Êýµ÷ÓÃ£¬Èç print(1,2,3)
+argv ::= exp {"," exp}           //²ÎÊýÁÐ±í
 
-letè¯­å¥
+letÓï¾ä
 let_stmt ::= "let" iden "=" exp;
-èµ‹å€¼è¯­å¥
+¸³ÖµÓï¾ä
 assign_stmt ::= iden "=" exp;
-ifè¯­å¥
+ifÓï¾ä
 if_stmt ::= "if" exp : stmt {elsif exp: stmt} [else: stmt]
-è¯­å¥
+Óï¾ä
 stmt ::= "{" many_stmt "}"
 many_stmt ::= sin_stmt{ ;sin_stmt }
 sin_stmt ::=   ;
@@ -250,7 +250,7 @@ AST * build_root_stmt(Taolist *t,int is_inline)
         case T_END:
             return root;
         case T_SEMI:
-            if(is_inline)return root;
+            if(is_inline){return root;}
         default:
         {
             syntax_error_unex(cur);
@@ -303,6 +303,10 @@ AST * build_stmt(Taolist *t)
                 match_n(t,1);
                 add_child_node(root,build_exp(t));
             }
+            else
+            {
+                root = tmp;
+            }
         }
         else
         {
@@ -324,25 +328,58 @@ AST * build_stmt(Taolist *t)
 }
 
 /**
-todoï¼šå†™ä¸ªå‡½æ•°åŒ¹é…ä¸€ä¸ªifè¯­å¥ï¼Œç„¶åŽè¿žæŽ¥åˆ°ä¸Šå±‚ã€‚
+Æ¥ÅäÒ»¸öifÓï¾ä£¬type±íÊ¾ÊÇif elif »¹ÊÇelse¡£
 */
-AST * build_if_stmt(Taolist *t)
-{
-    AST *root=  AST_init(2);
-    match(T_IF,t,root);
 
-    root->type=A_IF;
-    add_child_node(root,build_exp(t));
+AST * build_one_if_stmt(Taolist *t,token_type type)
+{
+    AST *root=  AST_init(3);
+    match(type,t,root);
+
+    if(type==T_IF || type==T_ELIF)root->type=A_IF;
+    else root->type=A_STMT;
+    if(type!=T_ELSE)add_child_node(root,build_exp(t));
     del_void_token(t);
     match(T_SVISIT,t,root);
+    AST *tmp= build_root_stmt(t,1);
+    add_child_node(root,tmp);
 
-    add_child_node(root,build_root_stmt(t,1));
     match(T_SEMI,t,root);
-    //del_void_token(t);
-    //token *cur = get_token(0,0,t);
-    //if(cur->type == T_ELIF)
+    if(type==T_ELSE)
     {
-        ;
+        AST_free(root);
+        root = tmp;
+    }
+    return root;
+
+}
+
+AST * build_if_stmt(Taolist *t)
+{
+    AST *root = build_one_if_stmt(t,T_IF);
+    AST *target = root;
+    del_void_token(t);
+    for(;;)
+    {
+        token *cur = get_token(0,0,t);
+        if(cur->type == T_ELIF)
+        {
+            AST *tmp = build_one_if_stmt(t,T_ELIF);
+            del_void_token(t);
+            add_child_node(target,tmp);
+            target=tmp;
+        }else
+        {
+            break;
+        }
+    }
+    del_void_token(t);
+    token *cur = get_token(0,0,t);
+    if(cur->type == T_ELSE)
+    {
+        AST *tmp = build_one_if_stmt(t,T_ELSE);
+        add_child_node(target,tmp);
+        target=tmp;
     }
     return root;
 }

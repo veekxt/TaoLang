@@ -1,11 +1,11 @@
-if 45+9>(7-2)*6 :print(hehe);
-    if hehe>9
-    :
-        print(hehe2)
-    ;
 
-45+8
-
-6-9
-8
-
+if   a:b;
+elif c:d;
+elif e:
+    if neiqian:
+    kkk;
+    elif nk :
+    notkkk;
+;
+elif g:h;
+else :gg;
