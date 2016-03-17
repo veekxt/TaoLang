@@ -475,17 +475,20 @@ Taolist * file_to_token_list(const char *fname)
     for(;;)
     {
         //获取token并添加到列表里
-        //合并连续的换行符和(或)分号，规则：
-        // ;\n => ;
-        // ;; => ;
-        // \n; => ;
-        // \n\n => \n
-        // 因为句末分号可选，但是两种分隔符又不完全一样
+        //合并连续的换行符，规则：
          token tmp = get_a_token(fs);
+         /*
          if((pre_type ==T_SEMI || pre_type ==T_SEMI_N) && tmp.type==T_SEMI)
          {
              Taolist_update(token,token_l->len-1,token_l,tmp);
          }else if(!((pre_type ==T_SEMI &&  tmp.type==T_SEMI_N)||(pre_type ==T_SEMI_N && tmp.type==T_SEMI_N)))
+         {
+             Taolist_add(token,token_l,tmp);
+         }
+         */
+         if(pre_type==T_SEMI_N && tmp.type==T_SEMI_N)
+         {
+         }else
          {
              Taolist_add(token,token_l,tmp);
          }

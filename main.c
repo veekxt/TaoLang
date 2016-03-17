@@ -12,7 +12,7 @@ int main()
     if(x->status==-1)puts("note: tokenizer has error !");
     puts("");
     AST *A = build_root_stmt(x);
-    if(PARSER_STATUS == ERROR)puts("note: parser has error !");
+    if(!PARSER_STATUS.IS_RIGHT)puts("note: parser has error !");
     puts("\nAST:");
     if(A!=NULL)AST_print(A,0,0);
     return 0;

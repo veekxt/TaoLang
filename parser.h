@@ -24,6 +24,21 @@ typedef enum
 
 typedef enum
 {
+    IN_ROOT=1,
+    IN_WHILE,
+    IN_IF,
+    IN_FOR,
+}stmt_place;
+
+typedef struct
+{
+    int IS_RIGHT;
+}parser_status;
+
+extern parser_status PARSER_STATUS;
+
+typedef enum
+{
     T_ERROR =1,
     T_INT,          // 89
     T_FLOAT,        // 3.14
@@ -78,13 +93,6 @@ typedef enum
     T_IDEN,         // variabel
     T_END,          // file end
 } token_type;
-
-typedef enum{
-ERROR=1,
-RIGHT,
-}paser_status;
-
-extern paser_status PARSER_STATUS;
 
 typedef enum
 {
@@ -173,6 +181,7 @@ void goto_next_stmt(Taolist *t);
 AST * build_root_stmt(Taolist *t);
 AST * build_stmt(Taolist *t);
 AST * build_let_stmt(Taolist *t);
+AST * build_if_stmt(Taolist *t);
 
 AST * build_iden_exp(Taolist *);
 AST * build_exp(Taolist *t);
