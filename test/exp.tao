@@ -1,5 +1,5 @@
 
-if   a:b;
+if   a:b+("mystr"-4);
 elif c:d;
 elif e:
     if neiqian:

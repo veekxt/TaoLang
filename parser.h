@@ -111,6 +111,7 @@ typedef enum
     A_TRY,          // try-catch
     A_INT,          // int
     A_FLOAT,        // float
+    A_STR,        //
     A_IDEN,
     A_VISIT,
     A_ASSIGN,       // =

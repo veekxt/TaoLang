@@ -80,6 +80,9 @@ int make_ast_type(token *t,AST *a)
     case T_FLOAT:
         a->type = A_FLOAT;
         break;
+    case T_STRING:
+        a->type = A_STR;
+        break;
     case T_IDEN:
         a->type = A_IDEN;
         break;
@@ -580,6 +583,7 @@ AST * build_start_call_exp(Taolist *t)
     break;
     case T_INT:
     case T_FLOAT:
+    case T_STRING:
     {
         match_n(t,1);
         root = AST_init(0);
