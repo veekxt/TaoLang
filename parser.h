@@ -79,11 +79,18 @@ typedef enum
     T_END,          // file end
 } token_type;
 
+typedef enum{
+ERROR=1,
+RIGHT,
+}paser_status;
+
+extern paser_status PARSER_STATUS;
 
 typedef enum
 {
     A_NIL = 1,
     A_ERROR,
+    A_STMT,
     A_LET,          // let
     A_IF,           // if
     A_WHILE,        // while
@@ -118,6 +125,7 @@ typedef enum
     A_FUNCALL,      // print();
     A_FUNDEF,       // def
     A_ARGV,
+    A_END,
 }AST_type;
 
 extern char *AST_comment[];
@@ -158,10 +166,15 @@ void print_token_l(Taolist * l);
 Taolist * file_to_token_list(const char *fname);
 token * get_token(int n,int i,Taolist *l);
 
-void AST_print(AST *t,int where_i);
+void AST_print(AST *t,int where_i,int);
+void AST_free(AST *a);
+void goto_next_stmt(Taolist *t);
 
 AST * build_root_stmt(Taolist *t);
+AST * build_stmt(Taolist *t);
+AST * build_let_stmt(Taolist *t);
 
+AST * build_iden_exp(Taolist *);
 AST * build_exp(Taolist *t);
 AST * build_bool_exp(Taolist *t);
 AST * build_com_exp(Taolist *t);

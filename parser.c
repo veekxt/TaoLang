@@ -9,12 +9,27 @@
 */
 #define add_child_node(father,son)\
 do{\
-    AST *tmp = son;\
-    if(tmp == NULL){AST_free(father);return NULL;}\
-    Taolist_add(AST *,father->child,tmp);\
+    AST *not_u_tmp = son;\
+    if(not_u_tmp == NULL){AST_free(father);return NULL;}\
+    Taolist_add(AST *,father->child,not_u_tmp);\
+}while(0);
+
+#define match(t_type,l)\
+do{\
+    token *cur = get_token(0,0,l);\
+    if(cur->type == t_type)\
+    {\
+        l->cur++;\
+    }else\
+    {\
+        syntax_error_unex(cur);\
+        return NULL;\
+    }\
 }while(0);
 
 #define match_n(t,n) (t)->cur+=(n);
+
+paser_status PARSER_STATUS = RIGHT;
 
 void AST_free(AST *a)
 {
@@ -27,20 +42,7 @@ int syntax_error_unex(token *cur)
     printf("line %d ,syntax error :unexpected token (%s):%s\n",\
                    cur->line,token_name[cur->type],cur->content==NULL?"":cur->content);
     //exit(0);
-    return 0;
-}
-
-int match(token_type type,Taolist *l)
-{
-    token *cur = get_token(0,0,l);
-    if(cur->type == type)
-    {
-        l->cur++;
-        return 1;
-    }else
-    {
-        syntax_error_unex(cur);
-    }
+    PARSER_STATUS = ERROR;
     return 0;
 }
 
@@ -56,6 +58,7 @@ int make_ast_type(token *t,AST *a)
         case T_NOT:     a->type = A_NOT;break;
         case T_VISIT:   a->type = A_VISIT;break;
         case T_INT:     a->type = A_INT;break;
+        case T_FLOAT:     a->type = A_FLOAT;break;
         case T_IDEN:    a->type = A_IDEN;break;
         case T_LESS:    a->type = A_SMALLER;break;
         case T_LESSEQ:    a->type = A_SMALLEREQ;break;
@@ -71,7 +74,7 @@ int make_ast_type(token *t,AST *a)
     return 1;
 }
 
-void AST_print(AST *t,int where_i)
+void AST_print(AST *t,int where_i,int has_pre)
 {
     if(t==NULL)return;
     if(t->content==NULL || strlen(t->content)==0)
@@ -91,7 +94,8 @@ void AST_print(AST *t,int where_i)
             {
                 printf("  ");
             }
-            AST_print(Taolist_get(AST*,i,t->child),where_i+1);
+            if(i==t->child->len - 1)has_pre=0;else has_pre=1;
+            AST_print(Taolist_get(AST*,i,t->child),where_i+1,has_pre);
         }
     }
 }
@@ -122,20 +126,145 @@ call_exp ::= iden                //属性调用
 fun ::= iden "(" argv ")"  //最简函数调用，如 print(1,2,3)
 argv ::= exp {"," exp}           //参数列表
 
+let语句
+let_stmt ::= "let" iden "=" exp;
+赋值语句
+assign_stmt ::= iden "=" exp;
 */
 
 AST * AST_init(int n)
 {
     AST *ast = (AST *)malloc(sizeof(AST));
     ast->type=A_NIL;
-    ast->content="";
+    ast->content=NULL;
     ast->child = Taolist_init(AST *,n);
     return ast;
 }
 
+void goto_next_stmt(Taolist *t)
+{
+    for(token *cur = get_token(0,0,t);
+        cur->type!=T_SEMI && cur->type!=T_SEMI_N;
+        cur = get_token(0,1,t))
+    {
+        //t->cur++;
+    }
+}
+
 AST * build_root_stmt(Taolist *t)
 {
-    return build_exp(t);
+    AST *root = AST_init(100);
+    root->type = A_STMT;
+    AST *tmp = NULL;
+    for(;;)
+    {
+        tmp = build_stmt(t);
+        if(tmp==NULL)
+        {
+            //错误恢复：直接跳到下一个分号或换行，继续parser
+            goto_next_stmt(t);
+            continue;
+        }
+        Taolist_add(AST *,root->child,tmp);
+
+        token *cur = get_token(0,0,t);
+        switch(cur->type)
+        {
+            case T_SEMI:
+            case T_SEMI_N:
+                match_n(t,1);
+            break;
+            case T_END:return root;
+            //错误恢复：直接跳到下一个分号或换行，继续parser
+            default:syntax_error_unex(cur);goto_next_stmt(t);
+        }
+    }
+    return root;
+}
+
+AST * build_stmt(Taolist *t)
+{
+    AST *root = NULL;
+    token *cur = get_token(0,0,t);
+    switch(cur->type)
+    {
+        case T_END:
+            {
+                root = AST_init(0);
+                root->type=A_END;
+            }
+        break;
+        case T_INT:
+        case T_FLOAT:
+            {
+                root = build_exp(t);
+            }
+        break;
+        case T_LET:
+            {
+                root = build_let_stmt(t);
+            }
+        break;
+        case T_IDEN:
+            {
+                AST *tmp = build_exp(t);
+                if(tmp!=NULL && tmp->type==A_IDEN)
+                {
+                    token *cur = get_token(0,0,t);
+                    if(cur->type == T_ASSIGN)
+                    {
+                        root = AST_init(2);
+                        root->type=A_ASSIGN;
+                        add_child_node(root,tmp);
+                        match_n(t,1);
+                        add_child_node(root,build_exp(t));
+                    }
+                }else
+                {
+                    root = tmp;
+                }
+            }
+        break;
+        default:
+            {
+                syntax_error_unex(cur);
+            }
+    }
+    return root;
+}
+
+AST * build_let_stmt(Taolist *t)
+{
+    match(T_LET,t);
+    AST *root=  AST_init(0);
+    root->type=A_LET;
+    token *cur = get_token(0,0,t);
+    if(cur->type==T_IDEN)
+    {
+        add_child_node(root,build_iden_exp(t));
+        match(T_IDEN,t);
+        match(T_ASSIGN,t);
+        add_child_node(root,build_exp(t));
+    }else{
+        syntax_error_unex(cur);
+        return NULL;
+    }
+    return root;
+}
+
+AST *build_iden_exp(Taolist *t)
+{
+    token *cur = get_token(0,0,t);
+    if(cur->type==T_IDEN)
+    {
+        AST *iden=AST_init(0);
+        iden->type=A_IDEN;
+        iden->content = cur->content;
+        return iden;
+    }else{
+        syntax_error_unex(cur);
+        return NULL;
+    }
 }
 
 AST * build_exp(Taolist *t)
@@ -289,6 +418,7 @@ AST * build_start_call_exp(Taolist *t)
         }
         break;
         case T_INT:
+        case T_FLOAT:
         {
             match_n(t,1);
             root = AST_init(0);
@@ -300,7 +430,7 @@ AST * build_start_call_exp(Taolist *t)
         {
             match_n(t,1);
             root = build_exp(t);
-            if(!match(T_RPAR,t))return NULL;
+            match(T_RPAR,t);
         }
         break;
         default:
@@ -314,36 +444,42 @@ AST * build_call_exp(Taolist *t)
 {
     //puts("build_call_exp");
     AST *root=NULL;
-    token *cur = get_token(0,0,t);
+    //token *cur = get_token(0,0,t);
     token *next = get_token(1,0,t);
     switch(next->type)
     {
         case T_LPAR:
         {
-            root = build_fun_exp(t);
+            return build_fun_exp(t);
         }
         break;
         default:
-        {   match_n(t,1);
-            root = AST_init(0);
-            make_ast_type(cur,root);
-            root->content=cur->content;
+        {
+            ;
         }
         break;
     }
+    root = build_iden_exp(t);
+    match_n(t,1);
     return root;
 }
 
 AST * build_fun_exp(Taolist *t)
 {
     //puts("build_fun_exp");
+    token *cur = get_token(0,0,t);
+    match(T_IDEN,t);
+    match(T_LPAR,t);
+
     AST *root = AST_init(0);
     root->type = A_FUNCALL;
-    token *cur = get_token(0,0,t);
     root->content = cur->content;
-    match_n(t,2);
-    add_child_node(root,build_argv_exp(t));
+
     cur = get_token(0,0,t);
+    if(cur->type!=T_RPAR)
+    {
+        add_child_node(root,build_argv_exp(t));
+    }
     match(T_RPAR,t);
     return root;
 }

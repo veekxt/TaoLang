@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "list.h"
 #define isalpha_(c) (isalpha(c) || (c)=='_')
+#define isalnum_(c) (isalnum(c) || (c)=='_')
 
 //关键字对比
 token_type which_keyword(const char *s)
@@ -197,7 +198,7 @@ token get_a_token(file_string *fs)
     else if(isalpha_(*s))
     {
         s++;
-        while(isalnum(*s))
+        while(isalnum_(*s))
         {
             s++;
         }

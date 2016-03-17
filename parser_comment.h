@@ -6,6 +6,7 @@ char *AST_comment[]=
     "",
     "nil",
     "error",
+    "stmt",
     "let",
     "if",
     "while",
@@ -39,6 +40,7 @@ char *AST_comment[]=
     "func",
     "def",
     "args",
+    "end",
 };
 
 char *token_name[]=
