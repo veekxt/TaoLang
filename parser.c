@@ -129,6 +129,12 @@ int make_ast_type(token *t,AST *a)
     case T_RTN:
         a->type = A_RTN;
         break;
+    case T_TRUE:
+        a->type = A_TRUE;
+        break;
+    case T_FALSE:
+        a->type = A_FALSE;
+        break;
     default:
         return 0;
     }
@@ -295,6 +301,8 @@ AST * build_stmt(Taolist *t,AST_type where)
     break;
     case T_INT:
     case T_FLOAT:
+    case T_TRUE:
+    case T_FALSE:
     {
         root = build_exp(t);
     }
@@ -719,6 +727,8 @@ AST * build_start_call_exp(Taolist *t)
     case T_INT:
     case T_FLOAT:
     case T_STRING:
+    case T_TRUE:
+    case T_FALSE:
     {
         match_n(t,1);
         root = AST_init(0);

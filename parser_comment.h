@@ -19,6 +19,8 @@ char *AST_comment[]=
     "int",
     "float",
     "str",
+    "true",
+    "false",
     "iden",
     "visit.",
     "=",

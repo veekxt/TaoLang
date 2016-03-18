@@ -113,6 +113,8 @@ typedef enum
     A_INT,          // int
     A_FLOAT,        // float
     A_STR,        //
+    A_TRUE,
+    A_FALSE,
     A_IDEN,
     A_VISIT,
     A_ASSIGN,       // =

@@ -1,15 +1,13 @@
 
 def kkk(arg1,arg2):
         re1
-        ctn
         re2
-        brk
         arg3-arg1
-        return 6+9;
+        return 6+9
     ;
 while a>b
 :
-    print(c)
+    print(true || false)
     brk
     print(b)
     ctn
