@@ -14,6 +14,7 @@ else :gg;
 while e>3 :
 
 e=e-1
-w=w+23;
+w+=23
+;
 
 

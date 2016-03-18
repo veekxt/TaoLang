@@ -177,6 +177,7 @@ let语句
 let_stmt ::= "let" iden "=" exp;
 赋值语句
 assign_stmt ::= iden "=" exp;
+            | iden (OP5 | OP6) "=" exp;
 if语句
 if_stmt ::= "if" exp : stmt {elsif exp: stmt} [else: stmt]
 语句
@@ -253,7 +254,7 @@ AST * build_root_stmt(Taolist *t,int is_inline)
         case T_END:
             return root;
         case T_SEMI:
-            if(is_inline){return root;}
+            if(is_inline){return root;}//if语句允许分号不换行
         default:
         {
             syntax_error_unex(cur);
@@ -299,27 +300,7 @@ AST * build_stmt(Taolist *t)
     break;
     case T_IDEN:
     {
-        AST *tmp = build_exp(t);
-        if(tmp!=NULL && tmp->type==A_IDEN)
-        {
-            token *cur = get_token(0,0,t);
-            if(cur->type == T_ASSIGN)
-            {
-                root = AST_init(2);
-                root->type=A_ASSIGN;
-                add_child_node(root,tmp);
-                match_n(t,1);
-                add_child_node(root,build_exp(t));
-            }
-            else
-            {
-                root = tmp;
-            }
-        }
-        else
-        {
-            root = tmp;
-        }
+        root = build_assign_stmt(t);
     }
     break;
     //case T_SEMI:
@@ -360,6 +341,87 @@ AST * build_one_if_stmt(Taolist *t,token_type type)
     }
     return root;
 
+}
+AST * build_assign_stmt_2(Taolist *t,token *cur,token *next)
+{
+    /**
+    a+=1  生成树
+
+    assign      //root
+        a       //iden
+        +       //exp
+            a   //iden
+            1   //exp(调用build_exp生成)
+    */
+    AST *root=AST_init(2);
+    AST *iden=AST_init(1);
+    AST *iden2=AST_init(1);
+    AST *exp=AST_init(2);
+
+    iden->type = A_IDEN;
+    iden->content = cur->content;
+    iden2->type = A_IDEN;
+    iden2->content = cur->content;
+
+    root->type=A_ASSIGN;
+    make_ast_type(next,exp);
+
+    add_child_node(root,iden);
+    add_child_node(root,exp);
+
+    add_child_node(exp,iden2);
+    match_n(t,3);///match iden,+,= to exp
+    add_child_node(exp,build_exp(t));
+
+    return root;
+}
+AST * build_assign_stmt_1(Taolist *t)
+{
+    AST *root = NULL;
+    AST *tmp = build_exp(t);
+    //尝试匹配一个表达式
+    //如果仅匹配到一个符号,继续向前,如果是"=" 说明是赋值语句
+    //但如果是+ - * / % ** 说明是类似于 a+=9 的赋值语句
+    if(tmp!=NULL && tmp->type==A_IDEN)
+    {
+        token *cur = get_token(0,0,t);
+        if(cur->type == T_ASSIGN)
+        {
+            root = AST_init(2);
+            root->type=A_ASSIGN;
+            add_child_node(root,tmp);
+            match_n(t,1);
+            add_child_node(root,build_exp(t));
+        }
+        else
+        {
+            root = tmp;
+        }
+    }
+    else
+    {
+        root = tmp;
+    }
+    return root;
+}
+AST * build_assign_stmt(Taolist *t)
+{
+    token *cur = get_token(0,0,t);
+    token *next_next = get_token(2,0,t);
+    token *next = get_token(1,0,t);
+    //如果
+    if(next->pri<=OP8 && next->pri>=OP3)
+    {
+        if(next_next->type==T_ASSIGN)
+        {
+            //第二种赋值
+            return build_assign_stmt_2(t,cur,next);
+        }
+    }else if(next->type == T_ASSIGN)
+    {
+        return build_assign_stmt_1(t);
+    }
+    return build_exp(t);
 }
 
 AST * build_while_stmt(Taolist *t)
