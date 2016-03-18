@@ -522,7 +522,12 @@ void print_token_l(Taolist * l)
 //获取一个token，n超前前几个位置，i内部指针偏移多少
 token * get_token(int n,int i,Taolist *l)
 {
-    token *tmp = Taolist_get_addr(token,l->cur+n,l);
+    token *tmp=NULL;
+    if(l->cur+n >= l->len || l->cur+i > l->len)
+    {
+        return Taolist_get_addr(token,l->len-1,l);
+    }
+    tmp = Taolist_get_addr(token,l->cur+n,l);
     l->cur+=i;
     return tmp;
 }

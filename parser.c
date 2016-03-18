@@ -216,7 +216,7 @@ void goto_next_stmt(Taolist *t)
     for(;;)
     {
         token *cur = get_token(0,0,t);
-        if(cur->type==T_SEMI_N)
+        if(cur->type==T_SEMI_N || cur->type==T_END)
         {
             //t->cur++;
             break;
@@ -513,6 +513,7 @@ AST * build_exp(Taolist *t)
     //puts("build_bool_exp");
     AST *s_num_exp = build_bool_exp(t);
     AST *root = s_num_exp;
+    if(root!=NULL)
     while(1)
     {
         token *cur = get_token(0,0,t);
@@ -538,6 +539,7 @@ AST * build_bool_exp(Taolist *t)
     //puts("build_bool_exp");
     AST *s_num_exp = build_com_exp(t);
     AST *root = s_num_exp;
+    if(root!=NULL)
     while(1)
     {
         token *cur = get_token(0,0,t);
@@ -564,6 +566,7 @@ AST * build_com_exp(Taolist *t)
     //puts("build_com_exp");
     AST *s_num_exp = build_num_exp(t);
     AST *root = s_num_exp;
+    if(root!=NULL)
     while(1)
     {
         token *cur = get_token(0,0,t);
@@ -589,6 +592,7 @@ AST * build_num_exp(Taolist *t)
     //puts("build_num_exp");
     AST *s_sin_exp = build_sin_exp(t);
     AST *root = s_sin_exp;
+    if(root!=NULL)
     while(1)
     {
         token *cur = get_token(0,0,t);
