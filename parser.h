@@ -77,6 +77,7 @@ typedef enum
     T_TRUE,         // true
     T_FALSE,        // false
     T_DEF,          // def
+    T_RTN,          // return
     T_CLASS,        // class
     T_CTN,          // continue
     T_BRK,          // break

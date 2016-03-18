@@ -34,6 +34,10 @@ token_type which_keyword(const char *s)
     {
         return T_DEF;
     }
+    else if (strcmp(s,"return")==0)
+    {
+        return T_RTN;
+    }
     else if (strcmp(s,"class")==0)
     {
         return T_CLASS;

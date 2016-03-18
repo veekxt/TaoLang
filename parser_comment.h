@@ -86,6 +86,7 @@ char *token_name[]=
     "true",
     "false",
     "def",
+    "return",
     "class",
     "continue",
     "break",

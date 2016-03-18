@@ -126,6 +126,9 @@ int make_ast_type(token *t,AST *a)
     case T_CTN:
         a->type = A_CTN;
         break;
+    case T_RTN:
+        a->type = A_RTN;
+        break;
     default:
         return 0;
     }
@@ -315,6 +318,20 @@ AST * build_stmt(Taolist *t,AST_type where)
     {
         root = build_while_stmt(t);
     }
+    break;
+    case T_RTN:
+        {
+            if(in_function(where))
+            {
+                root = AST_init(1);
+                make_ast_type(cur,root);
+                match_n(t,1);
+                token *cur = get_token(0,0,t);
+                if(cur->type!=T_SEMI_N)add_child_node(root,build_exp(t));
+            }else{
+                syntax_error_unex(cur);
+            }
+        }
     break;
     case T_CTN:
     case T_BRK:

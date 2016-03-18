@@ -5,6 +5,7 @@ def kkk(arg1,arg2):
         re2
         brk
         arg3-arg1
+        return 6+9;
     ;
 while a>b
 :
