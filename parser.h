@@ -183,6 +183,7 @@ AST * build_root_stmt(Taolist *t,int);
 AST * build_stmt(Taolist *t);
 AST * build_let_stmt(Taolist *t);
 AST * build_if_stmt(Taolist *t);
+AST * build_while_stmt(Taolist *t);
 
 AST * build_iden_exp(Taolist *);
 AST * build_exp(Taolist *t);

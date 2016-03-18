@@ -292,6 +292,11 @@ AST * build_stmt(Taolist *t)
         root = build_if_stmt(t);
     }
     break;
+    case T_WHILE:
+    {
+        root = build_while_stmt(t);
+    }
+    break;
     case T_IDEN:
     {
         AST *tmp = build_exp(t);
@@ -355,6 +360,22 @@ AST * build_one_if_stmt(Taolist *t,token_type type)
     }
     return root;
 
+}
+
+AST * build_while_stmt(Taolist *t)
+{
+    AST *root=  AST_init(2);
+    match(T_WHILE,t,root);
+
+    root->type=A_WHILE;
+    add_child_node(root,build_exp(t));
+    del_void_token(t);
+    match(T_SVISIT,t,root);
+    AST *tmp= build_root_stmt(t,1);
+    add_child_node(root,tmp);
+
+    match(T_SEMI,t,root);
+    return root;
 }
 
 AST * build_if_stmt(Taolist *t)
