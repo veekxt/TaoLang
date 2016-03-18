@@ -29,6 +29,13 @@ do{\
 }while(0);
 
 #define match_n(t,n) (t)->cur+=(n);
+
+#define in_block(where) (where==A_IF || where==A_WHILE || where==A_FUNDEF)
+
+#define in_function(where) (where==A_FUNDEF)
+
+#define in_loop(where) (where==A_WHILE || where==A_FOR)
+
 parser_status PARSER_STATUS=
 {
     1,
@@ -112,6 +119,12 @@ int make_ast_type(token *t,AST *a)
         break;
     case T_TWOSTAR:
         a->type = A_TWOSTAR;
+        break;
+    case T_BRK:
+        a->type = A_BRK;
+        break;
+    case T_CTN:
+        a->type = A_CTN;
         break;
     default:
         return 0;
@@ -225,12 +238,12 @@ void goto_next_stmt(Taolist *t)
     }
 }
 
-AST * build_root_stmt(Taolist *t,int is_inline)
+AST * build_root_stmt(Taolist *t,AST_type where)
 {
     del_void_token(t);
     AST *root = AST_init(0);
     root->type = A_STMT;
-    AST *tmp = build_stmt(t);
+    AST *tmp = build_stmt(t,where);
     Taolist_add(AST*,root->child,tmp);
     token *cur=NULL;
 
@@ -242,8 +255,8 @@ AST * build_root_stmt(Taolist *t,int is_inline)
         case T_SEMI_N:
             match_n(t,1);
             cur = get_token(0,0,t);
-            if(is_inline && cur->type==T_SEMI)return root;
-            tmp = build_stmt(t);
+            if(in_block(where) && cur->type==T_SEMI)return root;
+            tmp = build_stmt(t,where);
             if(tmp==NULL)
             {
                 goto_next_stmt(t);
@@ -254,7 +267,7 @@ AST * build_root_stmt(Taolist *t,int is_inline)
         case T_END:
             return root;
         case T_SEMI:
-            if(is_inline){return root;}//if语句允许分号不换行
+            if(in_block(where)){return root;}//if语句允许分号不换行
         default:
         {
             syntax_error_unex(cur);
@@ -265,7 +278,7 @@ AST * build_root_stmt(Taolist *t,int is_inline)
     return root;
 }
 
-AST * build_stmt(Taolist *t)
+AST * build_stmt(Taolist *t,AST_type where)
 {
     AST *root = NULL;
     token *cur = get_token(0,0,t);
@@ -303,6 +316,19 @@ AST * build_stmt(Taolist *t)
         root = build_while_stmt(t);
     }
     break;
+    case T_CTN:
+    case T_BRK:
+    {
+        if(in_loop(where))
+        {
+            root = AST_init(0);
+            make_ast_type(cur,root);
+            match_n(t,1);
+        }else{
+            syntax_error_unex(cur);
+        }
+    }
+    break;
     case T_IDEN:
     {
         root = build_assign_stmt(t);
@@ -335,7 +361,7 @@ AST * build_one_if_stmt(Taolist *t,token_type type)
     if(type!=T_ELSE)add_child_node(root,build_exp(t));
     del_void_token(t);
     match(T_SVISIT,t,root);
-    AST *tmp= build_root_stmt(t,1);
+    AST *tmp= build_root_stmt(t,A_IF);
     add_child_node(root,tmp);
 
     match(T_SEMI,t,root);
@@ -438,7 +464,7 @@ AST * build_while_stmt(Taolist *t)
     add_child_node(root,build_exp(t));
     del_void_token(t);
     match(T_SVISIT,t,root);
-    AST *tmp= build_root_stmt(t,1);
+    AST *tmp= build_root_stmt(t,A_WHILE);
     add_child_node(root,tmp);
 
     match(T_SEMI,t,root);
@@ -799,7 +825,7 @@ AST *build_fun_def_stmt(Taolist *t)
     add_child_node(root,build_fun_args(t));
     match(T_RPAR,t,root);
     match(T_SVISIT,t,root);
-    add_child_node(root,build_root_stmt(t,1));
+    add_child_node(root,build_root_stmt(t,A_FUNDEF));
     match(T_SEMI,t,root);
     return root;
 }

@@ -1,12 +1,15 @@
-if a:
-    def k():
-        re1
-        re2
-    ;
-s-=9;
-;
+
 def kkk(arg1,arg2):
         re1
+        ctn
         re2
+        brk
         arg3-arg1
     ;
+while a>b
+:
+    print(c)
+    brk
+    print(b)
+    ctn
+;
