@@ -1,18 +1,12 @@
-
-if   a:b+("mystr"-4);
-elif c:d;
-elif e:
-    if neiqian:
-        while dd:ll;
-    kkk;
-    elif nk :
-    notkkk;
+if a:
+    def k():
+        re1
+        re2
+    ;
+s-=9;
 ;
-elif g:h;
-else :gg;
-
-while e>3 :
-
-e=e-1
-w++23;
-
+def kkk(arg1,arg2):
+        re1
+        re2
+        arg3-arg1
+    ;

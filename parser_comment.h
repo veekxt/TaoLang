@@ -40,6 +40,7 @@ char *AST_comment[]=
     "&&",
     "func",
     "def",
+    "argv",
     "args",
     "end",
 };

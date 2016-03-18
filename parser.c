@@ -293,6 +293,11 @@ AST * build_stmt(Taolist *t)
         root = build_if_stmt(t);
     }
     break;
+    case T_DEF:
+    {
+        root = build_fun_def_stmt(t);
+    }
+    break;
     case T_WHILE:
     {
         root = build_while_stmt(t);
@@ -479,7 +484,6 @@ AST * build_let_stmt(Taolist *t)
     if(cur->type==T_IDEN)
     {
         add_child_node(root,build_iden_exp(t));
-        match(T_IDEN,t,root);
         match(T_ASSIGN,t,root);
         add_child_node(root,build_exp(t));
     }
@@ -499,6 +503,7 @@ AST *build_iden_exp(Taolist *t)
         AST *iden=AST_init(0);
         iden->type=A_IDEN;
         iden->content = cur->content;
+        match_n(t,1);
         return iden;
     }
     else
@@ -712,7 +717,6 @@ AST * build_call_exp(Taolist *t)
     break;
     }
     root = build_iden_exp(t);
-    match_n(t,1);
     return root;
 }
 
@@ -755,5 +759,47 @@ AST * build_argv_exp(Taolist *t)
             break;
         }
     }
+    return root;
+}
+
+AST *build_fun_args(Taolist *t)
+{
+    //puts("build_argv_exp");
+    AST *root = AST_init(0);
+    root ->type = A_ARGS;
+    token *cur = get_token(0,0,t);
+    if(cur->type==T_RPAR)
+    {
+        return root;
+    }
+    add_child_node(root,build_iden_exp(t));
+    while(1)
+    {
+        token *cur = get_token(0,0,t);
+        if(cur->type == T_COMMA)
+        {
+            match_n(t,1);
+            add_child_node(root,build_iden_exp(t));
+        }
+        else
+        {
+            break;
+        }
+    }
+    return root;
+}
+
+AST *build_fun_def_stmt(Taolist *t)
+{
+    AST *root = AST_init(0);
+    root->type = A_FUNDEF;
+    match(T_DEF,t,root);
+    add_child_node(root,build_iden_exp(t));
+    match(T_LPAR,t,root);
+    add_child_node(root,build_fun_args(t));
+    match(T_RPAR,t,root);
+    match(T_SVISIT,t,root);
+    add_child_node(root,build_root_stmt(t,1));
+    match(T_SEMI,t,root);
     return root;
 }

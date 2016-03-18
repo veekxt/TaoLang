@@ -134,6 +134,7 @@ typedef enum
     A_FUNCALL,      // print();
     A_FUNDEF,       // def
     A_ARGV,
+    A_ARGS,
     A_END,
 }AST_type;
 
@@ -187,6 +188,8 @@ AST * build_while_stmt(Taolist *t);
 AST * build_assign_stmt(Taolist *t);
 AST * build_assign_stmt_1(Taolist *t);
 AST * build_assign_stmt_2(Taolist *t,token *cur,token *next);
+AST *build_fun_args(Taolist *t);
+AST *build_fun_def_stmt(Taolist *t);
 
 AST * build_iden_exp(Taolist *);
 AST * build_exp(Taolist *t);
