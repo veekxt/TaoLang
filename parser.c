@@ -398,87 +398,44 @@ AST * build_one_if_stmt(Taolist *t,token_type type)
     return root;
 
 }
-AST * build_assign_stmt_2(Taolist *t,token *cur,token *next)
-{
-    /**
-    a+=1  生成树
 
-    assign      //root
-        a       //iden
-        +       //exp
-            a   //iden
-            1   //exp(调用build_exp生成)
-    */
-    AST *root=AST_init(2);
-    AST *iden=AST_init(1);
-    AST *iden2=AST_init(1);
-    AST *exp=AST_init(2);
-
-    iden->type = A_IDEN;
-    iden->content = cur->content;
-    iden2->type = A_IDEN;
-    iden2->content = cur->content;
-
-    root->type=A_ASSIGN;
-    make_ast_type(next,exp);
-
-    add_child_node(root,iden);
-    add_child_node(root,exp);
-
-    add_child_node(exp,iden2);
-    match_n(t,3);///match iden,+,= to exp
-    add_child_node(exp,build_exp(t));
-
-    return root;
-}
-AST * build_assign_stmt_1(Taolist *t)
-{
-    AST *root = NULL;
-    AST *tmp = build_exp(t);
-    //尝试匹配一个表达式
-    //如果仅匹配到一个符号,继续向前,如果是"=" 说明是赋值语句
-    //但如果是+ - * / % ** 说明是类似于 a+=9 的赋值语句
-    if(tmp!=NULL && tmp->type==A_IDEN)
-    {
-        token *cur = get_token(0,0,t);
-        if(cur->type == T_ASSIGN)
-        {
-            root = AST_init(2);
-            root->type=A_ASSIGN;
-            add_child_node(root,tmp);
-            match_n(t,1);
-            add_child_node(root,build_exp(t));
-        }
-        else
-        {
-            root = tmp;
-        }
-    }
-    else
-    {
-        root = tmp;
-    }
-    return root;
-}
 AST * build_assign_stmt(Taolist *t)
 {
+    AST *l_value = build_exp(t);
+
     token *cur = get_token(0,0,t);
-    token *next_next = get_token(2,0,t);
     token *next = get_token(1,0,t);
     //如果
-    if(next->pri<=OP8 && next->pri>=OP3)
+    if(cur->pri<=OP8 && cur->pri>=OP3)
     {
-        if(next_next->type==T_ASSIGN)
+        if(next->type==T_ASSIGN)
         {
             //第二种赋值
-            return build_assign_stmt_2(t,cur,next);
+            //return build_assign_stmt_2(t,cur,next);
+            AST *root=AST_init(2);
+            AST *exp=AST_init(2);
+            root->type=A_ASSIGN;
+            make_ast_type(cur,exp);
+            add_child_node(exp,l_value);
+            match_n(t,2);
+            add_child_node(exp,build_exp(t));
+            add_child_node(root,l_value);
+            add_child_node(root,exp);
+            return root;
         }
-    }else if(next->type == T_ASSIGN)
+    }else if(cur->type == T_ASSIGN)
     {
-        return build_assign_stmt_1(t);
+        //return build_assign_stmt_1(t);
+        AST *root = AST_init(2);
+        root->type=A_ASSIGN;
+        add_child_node(root,l_value);
+        match_n(t,1);
+        add_child_node(root,build_exp(t));
+        return root;
     }
-    return build_exp(t);
+    return l_value;
 }
+
 
 AST * build_while_stmt(Taolist *t)
 {
@@ -575,6 +532,10 @@ AST * build_exp(Taolist *t)
         token *cur = get_token(0,0,t);
         if(cur->pri == OP8)
         {
+            if(get_token(1,0,t)->type==T_ASSIGN)
+            {
+                break;
+            }
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
@@ -601,6 +562,10 @@ AST * build_bool_exp(Taolist *t)
         token *cur = get_token(0,0,t);
         if(cur->pri == OP7)
         {
+            if(get_token(1,0,t)->type==T_ASSIGN)
+            {
+                break;
+            }
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
@@ -628,6 +593,10 @@ AST * build_com_exp(Taolist *t)
         token *cur = get_token(0,0,t);
         if(cur->pri == OP6)
         {
+            if(get_token(1,0,t)->type==T_ASSIGN)
+            {
+                break;
+            }
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
@@ -654,6 +623,10 @@ AST * build_num_exp(Taolist *t)
         token *cur = get_token(0,0,t);
         if(cur->pri == OP5)
         {
+            if(get_token(1,0,t)->type==T_ASSIGN)
+            {
+                break;
+            }
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
@@ -697,6 +670,10 @@ AST * build_top_exp(Taolist *t)
         token *cur = get_token(0,0,t);
         if(cur->pri == OP3)
         {
+            if(get_token(1,0,t)->type==T_ASSIGN)
+            {
+                break;
+            }
             match_n(t,1);
             AST * now = AST_init(2);
             make_ast_type(cur,now);
