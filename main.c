@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "parser.h"
 #include "list.h"
+#include "object.h"
 
 int main()
 {
