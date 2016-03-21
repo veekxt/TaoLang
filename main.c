@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "parser.h"
 #include "list.h"
+#include "exec.h"
 #include "object.h"
 
 int main()
@@ -16,5 +17,10 @@ int main()
     if(!PARSER_STATUS.IS_RIGHT)puts("note: parser has error !");
     puts("\nAST:");
     if(A!=NULL)AST_print(A,0,0);
+    /*
+    puts("");
+    exec_env *env = make_init_env();
+    exec_stmt(A,env);
+    */
     return 0;
 }

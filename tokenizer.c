@@ -100,7 +100,7 @@ token_type which_keyword(const char *s)
 //输出一个token，格式： token名称 => token内容
 void print_token(token *t)
 {
-    printf("line %d , %-15s => %s\n",t->line,token_name[t->type],t->content==NULL?token_name[t->type]:t->content);
+    printf("line %-4d , %-15s => %s\n",t->line,token_name[t->type],t->content==NULL?token_name[t->type]:t->content);
 }
 
 //获取文件长度
