@@ -66,6 +66,11 @@ typedef struct
 typedef struct
 {
     OBJ_HEAD
+}none_object;
+
+typedef struct
+{
+    OBJ_HEAD
     char *str;
     size_t len;
 }str_object;
@@ -80,6 +85,9 @@ Tao_object *int_mod(Tao_object *a,Tao_object *b);
 
 Tao_object *str_new(char *);
 Tao_object *str_to_str(Tao_object *n);
+
+Tao_object *none_new(void);
+Tao_object *none_to_str(Tao_object *n);
 
 /*
 Tao_object *flaot_to_str(Tao_object *n);

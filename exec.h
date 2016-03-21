@@ -1,13 +1,12 @@
 #ifndef EXEC_H_INCLUDED
 #define EXEC_H_INCLUDED
 #include "object.h"
+#include "sysfun.h"
 
-typedef struct arg_list_t
+typedef struct symbol_table_t
 {
-    char *name;
-    Tao_object *obj;
-    struct arg_list_t *next;
-};
-
+    symbol_list *head;
+    struct symbol_table_t *next;
+}symbol_table;
 
 #endif // EXEC_H_INCLUDED

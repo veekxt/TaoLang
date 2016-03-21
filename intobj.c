@@ -81,6 +81,31 @@ Tao_object *str_to_str(Tao_object *n)
     return n;
 }
 
+Tao_class_entry none_entry=
+{
+    "none",
+    C_NONE,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    none_to_str,
+};
+
+Tao_object *none_new(void)
+{
+    none_object *s = malloc(sizeof(none_object));
+    s->ce = &none_entry;
+    return (Tao_object *)s;
+}
+
+Tao_object *none_to_str(Tao_object *n)
+{
+    return str_new("none");
+}
+
 /*
 
 Tao_class_entry float_entry=
@@ -97,15 +122,6 @@ Tao_class_entry bool_entry=
     "bool",
     C_BOOL,
     bool_to_str,
-    NULL,
-    NULL,
-};
-
-Tao_class_entry none_entry=
-{
-    "none",
-    C_NONE,
-    none_to_str,
     NULL,
     NULL,
 };
