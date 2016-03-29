@@ -3,6 +3,30 @@
 #include <string.h>
 #include "exec.h"
 
+void exec_error(char *s,int n)
+{
+    printf("error: %s\n",s);
+    exit(n);
+}
+
+int is_same_type(Tao_value*a,Tao_value*b)
+{
+    if(a->type==b->type)
+    {
+        if(a->type!=C_USEROBJ)
+        {
+            return 1;
+        }else
+        {
+            //判断obj类型
+        }
+    }else
+    {
+        return 0;
+    }
+    return 0;
+}
+
 symbol_table * symbol_table_init(void)
 {
     list_init_g(symbol_table);
@@ -49,25 +73,25 @@ Tao_value * symbol_table_find(symbol_table *l,char *s)
 
 Tao_value *add_two_value(Tao_value *a,Tao_value *b)
 {
-    if(a->type==b->type)
+    //不要在这判断类型！！！！！！！
+    //应该在计算前进行检查！！！！！！
+    if(is_same_type(a,b))
     {
-        if(a->type==C_USEROBJ)
+        switch(a->type)
         {
-            //自定义的struct，可能以后会支持运算符重载
-        }else
-        {
-            switch(a->type)
-            {
-                case C_INT:{
-                    Tao_value *tmp = malloc(sizeof(Tao_value));
-                    tmp->type=C_INT;
-                    tmp->value.int_value.val=a->value.int_value.val+b->value.int_value.val;
-                    return tmp;
-                }
-                break;
+            case C_INT:{
+                Tao_value *tmp = malloc(sizeof(Tao_value));
+                tmp->type=C_INT;
+                tmp->value.int_value.val=a->value.int_value.val+b->value.int_value.val;
+                return tmp;
             }
+            break;
         }
+    }else
+    {
+        exec_error("two value type is different ,canot add ",1);
     }
+    return NULL;
 }
 
 exec_env *make_init_env(void)
@@ -105,10 +129,13 @@ exec_result *cal_exp(AST *ast,exec_env *env)
         case A_ADD:{
             AST *ast_left = Taolist_get(AST*,0,ast->child);
             AST *ast_right = Taolist_get(AST*,1,ast->child);
+
             exec_result *left = cal_exp(ast_left,env);
             exec_result *right = cal_exp(ast_right,env);
+
             Tao_value *left_val = left->return_value;
             Tao_value *right_val = right->return_value;
+
             tar->return_value = add_two_value(left_val,right_val);
             tar->result=R_NOR;
         }
