@@ -11,6 +11,14 @@ Tao_value *new_int(long a)
     return tmp;
 }
 
+Tao_value *new_float(double a)
+{
+    Tao_value *tmp=malloc(sizeof(Tao_value));
+    tmp->type=C_FLOAT;
+    tmp->value.float_value.val = a;
+    return tmp;
+}
+
 Tao_value *new_str(char *a)
 {
     Tao_value *tmp=malloc(sizeof(Tao_value));
