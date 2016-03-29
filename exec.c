@@ -27,6 +27,23 @@ int is_same_type(Tao_value*a,Tao_value*b)
     return 0;
 }
 
+int is_addble(Tao_value*a,Tao_value*b)
+{
+    //首先类型要一致
+    if(is_same_type(a,b))
+    {
+        //检查是否可以相加
+        if(a->type==C_BOOL||a->type==C_NONE) return 0;
+        if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
+        //if(a->type==C_STR) return 0;
+    }
+    else
+    {
+        return 0;
+    }
+    return 1;
+}
+
 symbol_table * symbol_table_init(void)
 {
     list_init_g(symbol_table);
@@ -127,13 +144,13 @@ exec_result *cal_exp(AST *ast,exec_env *env)
 
             Tao_value *left_val = left->return_value;
             Tao_value *right_val = right->return_value;
-            if(is_same_type(left_val,right_val))
+            if(is_addble(left_val,right_val))
             {
                 tar->return_value = add_two_value(left_val,right_val);
                 tar->result=R_NOR;
             }else
             {
-                exec_error("two value type is different ,canot add ",ast,1);
+                exec_error("canot add ,type error",ast,1);
             }
         }
         break;
@@ -162,7 +179,6 @@ exec_result *exec_let(AST *ast,exec_env *env)
 {
     AST *left = Taolist_get(AST*,0,ast->child);
     AST *right = Taolist_get(AST*,1,ast->child);
-    //简单测试，右边仅仅是一个数字
     symbol_list_add(&(env->env_symbol_table->head),left->content,cal_exp(right,env)->return_value);
     return NULL;//todo return result
 }
