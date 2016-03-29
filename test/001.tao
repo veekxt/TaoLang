@@ -1,2 +1,3 @@
 let a = 98
-print(a)
+print(a,"\n",67)
+print(45,"\n",a)

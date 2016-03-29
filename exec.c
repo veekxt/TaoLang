@@ -72,6 +72,13 @@ exec_result *cal_exp(AST *ast,exec_env *env)
             tar->return_value=obj;
             tar->result=R_NOR;
         }
+        break;
+        case A_STR:{
+            Tao_value *obj = new_str(ast->content);
+            tar->return_value=obj;
+            tar->result=R_NOR;
+        }
+        break;
     }
     return tar;
 }
@@ -83,14 +90,13 @@ exec_result *exec_funcall(AST *ast,exec_env *env)
     AST *args_ast = Taolist_get(AST*,0,ast->child);
     obj_list *args = symbol_list_init();
 
-    for(int i=0;i<args_ast->child->len;i++)
+    for(int i=args_ast->child->len-1;i>=0;i--)
     {
         AST *arg_ast = Taolist_get(AST*,i,args_ast->child);
         exec_result *rs = cal_exp(arg_ast,env);
         symbol_list_add(&(args),arg_ast->content,rs->return_value);
     }
     func(args);
-    puts("a fun call");
     return NULL;//todo return result
 }
 
@@ -100,7 +106,6 @@ exec_result *exec_let(AST *ast,exec_env *env)
     AST *right = Taolist_get(AST*,1,ast->child);
     //简单测试，右边仅仅是一个数字
     symbol_list_add(&(env->env_symbol_table->head),left->content,cal_exp(right,env)->return_value);
-    printf("add a int\n");
     return NULL;//todo return result
 }
 
