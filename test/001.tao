@@ -1,3 +1,10 @@
 let a = 98
 let b = 10
 print("98+10=",a+b+"sd")
+if a>b :
+print(s)
+;
+elif s<n:1+1;
+else:
+print(k)
+;

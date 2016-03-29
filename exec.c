@@ -3,9 +3,9 @@
 #include <string.h>
 #include "exec.h"
 
-void exec_error(char *s,int n)
+void exec_error(char *s,AST *ast,int n)
 {
-    printf("error: %s\n",s);
+    printf("line %d ,error: %s\n",ast->line,s);
     exit(n);
 }
 
@@ -73,23 +73,15 @@ Tao_value * symbol_table_find(symbol_table *l,char *s)
 
 Tao_value *add_two_value(Tao_value *a,Tao_value *b)
 {
-    //不要在这判断类型！！！！！！！
-    //应该在计算前进行检查！！！！！！
-    if(is_same_type(a,b))
+    switch(a->type)
     {
-        switch(a->type)
-        {
-            case C_INT:{
-                Tao_value *tmp = malloc(sizeof(Tao_value));
-                tmp->type=C_INT;
-                tmp->value.int_value.val=a->value.int_value.val+b->value.int_value.val;
-                return tmp;
-            }
-            break;
+        case C_INT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_INT;
+            tmp->value.int_value.val=a->value.int_value.val+b->value.int_value.val;
+            return tmp;
         }
-    }else
-    {
-        exec_error("two value type is different ,canot add ",1);
+        break;
     }
     return NULL;
 }
@@ -135,9 +127,14 @@ exec_result *cal_exp(AST *ast,exec_env *env)
 
             Tao_value *left_val = left->return_value;
             Tao_value *right_val = right->return_value;
-
-            tar->return_value = add_two_value(left_val,right_val);
-            tar->result=R_NOR;
+            if(is_same_type(left_val,right_val))
+            {
+                tar->return_value = add_two_value(left_val,right_val);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("two value type is different ,canot add ",ast,1);
+            }
         }
         break;
     }

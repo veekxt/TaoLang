@@ -164,6 +164,7 @@ typedef struct
 {
     AST_type type;
     char *content;
+    int line;
     Taolist *child;
 }AST;
 
