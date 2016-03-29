@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sysfun.h"
+#include "exec.h"
 
 symbol_list * symbol_list_init(void)
 {
     list_init_g(symbol_list);
 }
 
-void symbol_list_add(symbol_list **l,char *name,Tao_object *obj)
+void symbol_list_add(symbol_list **l,char *name,Tao_value *obj)
 {
     symbol_list *head = malloc(sizeof(symbol_list));
     head->next=*l;
@@ -20,6 +20,19 @@ void symbol_list_add(symbol_list **l,char *name,Tao_object *obj)
 sysfun_list * sysfun_list_init(void)
 {
     list_init_g(sysfun_list);
+}
+
+sysfun sysfun_find(sysfun_list *l,char *s)
+{
+    while(l->next!=NULL)
+    {
+        if(strcmp(l->name,s)==0)
+        {
+            return l->func;
+        }
+        l=l->next;
+    }
+    return NULL;
 }
 
 void sysfun_list_add(sysfun_list **l,char *name,sysfun func)
@@ -38,8 +51,11 @@ void add_sysfun(sysfun_list **l)
     //...
 }
 
-Tao_object * sys_print(obj_list *args)
+Tao_value *sys_print(obj_list *args)
 {
+    Tao_value *tmp=malloc(sizeof(Tao_value));
+    tmp->type=C_NONE;
+
     char *end="\n";
     while(!is_empty(args))
     {
@@ -49,9 +65,32 @@ Tao_object * sys_print(obj_list *args)
             end = ((str_object *)args->obj->ce->ob_to_str(args->obj))->str;
         }
         */
-        printf(((str_object *)args->obj->ce->ob_to_str(args->obj))->str);
+        //printf(((str_object *)args->obj->ce->ob_to_str(args->obj))->str);
+        switch(args->obj->type)
+        {
+        case C_INT:
+            printf("%ld",args->obj->value.int_value.val);
+        break;
+        case C_FLOAT:
+            printf("%f",args->obj->value.float_value.val);
+        break;
+        case C_BOOL:
+            printf(args->obj->value.bool_value.val==0?"false":"true");
+        break;
+        case C_STR:
+            printf("%s",args->obj->value.str_value.val);
+        break;
+        case C_NONE:
+            printf("%s","none");
+        break;
+        case C_USEROBJ:
+            ///todo
+            //printf("%s","none");
+        break;
+        }
         args=args->next;
     }
     printf("%s",end);
-    return none_new();//return none
+
+    return tmp;//return none
 }
