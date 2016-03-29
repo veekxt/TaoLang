@@ -47,6 +47,29 @@ Tao_value * symbol_table_find(symbol_table *l,char *s)
     return NULL;
 }
 
+Tao_value *add_two_value(Tao_value *a,Tao_value *b)
+{
+    if(a->type==b->type)
+    {
+        if(a->type==C_USEROBJ)
+        {
+            //自定义的struct，可能以后会支持运算符重载
+        }else
+        {
+            switch(a->type)
+            {
+                case C_INT:{
+                    Tao_value *tmp = malloc(sizeof(Tao_value));
+                    tmp->type=C_INT;
+                    tmp->value.int_value.val=a->value.int_value.val+b->value.int_value.val;
+                    return tmp;
+                }
+                break;
+            }
+        }
+    }
+}
+
 exec_env *make_init_env(void)
 {
     exec_env *env = malloc(sizeof(exec_env));
@@ -76,6 +99,17 @@ exec_result *cal_exp(AST *ast,exec_env *env)
         case A_STR:{
             Tao_value *obj = new_str(ast->content);
             tar->return_value=obj;
+            tar->result=R_NOR;
+        }
+        break;
+        case A_ADD:{
+            AST *ast_left = Taolist_get(AST*,0,ast->child);
+            AST *ast_right = Taolist_get(AST*,1,ast->child);
+            exec_result *left = cal_exp(ast_left,env);
+            exec_result *right = cal_exp(ast_right,env);
+            Tao_value *left_val = left->return_value;
+            Tao_value *right_val = right->return_value;
+            tar->return_value = add_two_value(left_val,right_val);
             tar->result=R_NOR;
         }
         break;
