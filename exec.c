@@ -878,6 +878,7 @@ void exec_assign(AST *ast,exec_env *env)
 exec_result exec_if(AST *ast,exec_env *env)
 {
     exec_result rs;
+    rs.result=R_NOR;
     AST *exp =Taolist_get(AST*,0,ast->child);
     AST *if_stmt =Taolist_get(AST*,1,ast->child);
     //todo 错误处理
@@ -911,6 +912,8 @@ exec_result exec_if(AST *ast,exec_env *env)
 
 exec_result exec_while(AST *ast,exec_env *env)
 {
+    exec_result rs;
+    rs.result=R_NOR;
     AST *exp =Taolist_get(AST*,0,ast->child);
     AST *while_stmt =Taolist_get(AST*,1,ast->child);
     //todo 错误处理
@@ -922,7 +925,7 @@ exec_result exec_while(AST *ast,exec_env *env)
         {
             if(exp_rs->value.bool_value.val==1)
             {
-                exec_result rs = exec_stmt(while_stmt,env);
+                rs = exec_stmt(while_stmt,env);
                 if(rs.result==R_BRK)
                 {
                     break;
@@ -941,8 +944,6 @@ exec_result exec_while(AST *ast,exec_env *env)
             exec_error("\"while-statement\" need a bool value , type error",ast,1);
         }
     }
-    exec_result rs;
-    rs.result=R_NOR;
     return rs;
 }
 
@@ -973,11 +974,15 @@ exec_result exec_stmt(AST *ast,exec_env *env)
             case A_IF:
             {
                 rs = exec_if(a_child,env);
+                if(rs.result==R_CTN || rs.result==R_BRK)
+                {
+                    return rs;
+                }
             }
             break;
             case A_WHILE:
             {
-                exec_while(a_child,env);
+                rs = exec_while(a_child,env);
             }
             break;
             case A_BRK:
@@ -1002,5 +1007,6 @@ exec_result exec_stmt(AST *ast,exec_env *env)
             default:;
         }
     }
+    rs.result=R_NOR;
     return rs;//todo return result
 }

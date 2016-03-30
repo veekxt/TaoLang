@@ -47,4 +47,5 @@ typedef struct
 Tao_value *new_str(char *a);
 Tao_value *new_int(long a);
 Tao_value *new_float(double a);
+Tao_value *new_bool(int a);
 #endif // TYPE_H_INCLUDED

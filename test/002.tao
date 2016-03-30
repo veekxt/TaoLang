@@ -1,13 +1,19 @@
 
-//²âÊÔ¼òµ¥while £¬Êä³ö3µÄ±¶Êı
+//æµ‹è¯•ç®€å•while ï¼Œè¾“å‡º3çš„å€æ•°
 
-let s=0
+let s=1
 let i=0
+let y=9
 
-while s<=100
+while s<=1000
 {
+    if(s>=100){break}
+
     if s%3 == 0 {
         print(s," ")
     }
     s+=1
+    continue
+    print("not print")
+    s+=3
 }

@@ -31,6 +31,7 @@ int test_a_file(char *s)
 
 int main(void)
 {
+    //test_a_file("test/primer.tao");
     test_a_file("test/primer.tao");
     return 0;
 }
