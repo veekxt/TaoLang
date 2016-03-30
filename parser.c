@@ -34,7 +34,8 @@ do{\
 
 #define in_function(where) (where==A_FUNDEF)
 
-#define in_loop(where) (where==A_WHILE || where==A_FOR)
+//并没有什么卵用，如果while里嵌入了if ，依然是错误
+//#define in_loop(where) (where==A_WHILE || where==A_FOR)
 
 parser_status PARSER_STATUS=
 {
@@ -347,17 +348,13 @@ AST * build_stmt(Taolist *t,AST_type where)
             }
         }
     break;
+    //todo 如何判断处于while中？不在循环里不应该通过
     case T_CTN:
     case T_BRK:
     {
-        if(in_loop(where))
-        {
-            root = AST_init(0);
-            make_ast_type(cur,root);
-            match_n(t,1);
-        }else{
-            syntax_error_unex(cur);
-        }
+        root = AST_init(0);
+        make_ast_type(cur,root);
+        match_n(t,1);
     }
     break;
     case T_IDEN:
@@ -498,7 +495,6 @@ AST * build_if_stmt(Taolist *t)
         add_child_node(target,tmp);
         target=tmp;
     }
-    print_token(get_token(0,0,t));
     return root;
 }
 

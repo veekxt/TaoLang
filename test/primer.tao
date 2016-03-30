@@ -1,13 +1,13 @@
 //测试0.03,break和continue测试
-//输出3到100的素数
+//输出100以内的素数
 
 
-let j= 3;/*
-测试注释
-*/
-while(j <= 100.tostr().toint())
+let j= 2
+let i = 2
+
+while(j <= 100)
 {
-    let i = 2
+    i = 2
     while(i<j)
     {
         if(j%i == 0)
@@ -16,7 +16,7 @@ while(j <= 100.tostr().toint())
         }
         i=i+1
     }
-    # print(i,",",j,"\n");
-    if(i==j){print(j," is primer","\n");}
-    j=j+1;
+    # print(i,",",j,"\n")
+    if(i==j){print(j," is primer","\n")}
+    j=j-(-1)
 }

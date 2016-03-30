@@ -42,11 +42,11 @@ token_type which_keyword(const char *s)
     {
         return T_CLASS;
     }
-    else if (strcmp(s,"ctn")==0)
+    else if (strcmp(s,"continue")==0)
     {
         return T_CTN;
     }
-    else if (strcmp(s,"brk")==0)
+    else if (strcmp(s,"break")==0)
     {
         return T_BRK;
     }

@@ -4,10 +4,10 @@
 #include "list.h"
 #include "exec.h"
 
-int main()
+int test_a_file(char *s)
 {
     //Taolist *x = file_to_token_list("test/primer.tao");
-    Taolist *x = file_to_token_list("test/002.tao");
+    Taolist *x = file_to_token_list(s);
     puts("token:");
     if(x!=NULL)print_token_l(x);
     if(x->status==-1)puts("note: tokenizer has error !");
@@ -26,5 +26,11 @@ int main()
     {
         puts("\nparser error , so will not intepret!");
     }
+    return 0;
+}
+
+int main(void)
+{
+    test_a_file("test/primer.tao");
     return 0;
 }

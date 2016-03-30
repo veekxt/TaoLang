@@ -80,9 +80,9 @@ typedef struct
 symbol_table * symbol_table_init(void);
 void symbol_table_add(symbol_table **l,symbol_list *s_head);
 exec_env *make_init_env(void);
-exec_result *exec_let(AST *ast,exec_env *status);
-exec_result *exec_stmt(AST *ast,exec_env *status);
-exec_result *exec_funcall(AST *ast,exec_env *env);
-exec_result *cal_exp(AST *ast,exec_env *env);
+void exec_let(AST *ast,exec_env *status);
+exec_result exec_stmt(AST *ast,exec_env *status);
+exec_result exec_funcall(AST *ast,exec_env *env);
+exec_result cal_exp(AST *ast,exec_env *env);
 
 #endif // EXEC_H_INCLUDED

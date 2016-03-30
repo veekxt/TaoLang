@@ -58,7 +58,7 @@ Tao_value *sys_print(obj_list *args)
     Tao_value *tmp=malloc(sizeof(Tao_value));
     tmp->type=C_NONE;
 
-    char *end="\n";
+    char *end="";
     while(!is_empty(args))
     {
         /*
@@ -114,5 +114,8 @@ Tao_value *sys_int(obj_list *args)
     if(args->obj->type==C_STR)
     {
         return new_int(atol(args->obj->value.str_value.val));
+    }else
+    {
+        return NULL;
     }
 }
