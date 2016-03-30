@@ -34,8 +34,9 @@ sysfun_list * sysfun_list_init(void);
 void sysfun_list_add(sysfun_list **l,char *name,sysfun func);
 void add_sysfun(sysfun_list **l);
 Tao_value *sys_print(obj_list *args);
+Tao_value *sys_input(obj_list *args);
+Tao_value *sys_int(obj_list *args);
 sysfun sysfun_find(sysfun_list *l,char *s);
-
 ///exec.c
 typedef enum
 {

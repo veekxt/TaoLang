@@ -47,6 +47,8 @@ void sysfun_list_add(sysfun_list **l,char *name,sysfun func)
 void add_sysfun(sysfun_list **l)
 {
     sysfun_list_add(l,"print",sys_print);
+    sysfun_list_add(l,"input",sys_input);
+    sysfun_list_add(l,"int",sys_int);
     //...
     //...
 }
@@ -93,4 +95,24 @@ Tao_value *sys_print(obj_list *args)
     printf("%s",end);
 
     return tmp;//return none
+}
+
+Tao_value *sys_input(obj_list *args)
+{
+    sys_print(args);
+    char *s=malloc(1001);
+    scanf("%[^\n]",s);
+    getchar();
+    Tao_value *tmp = new_str(s);
+    //free(s);
+    tmp->type=C_STR;
+    return tmp;
+}
+
+Tao_value *sys_int(obj_list *args)
+{
+    if(args->obj->type==C_STR)
+    {
+        return new_int(atol(args->obj->value.str_value.val));
+    }
 }

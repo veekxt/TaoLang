@@ -603,6 +603,11 @@ exec_result *cal_exp(AST *ast,exec_env *env)
     exec_result *tar = malloc(sizeof(exec_result));
     switch(ast->type)
     {
+        case A_FUNCALL:{
+            //free(tar);
+            tar = exec_funcall(ast,env);
+        }
+        break;
         case A_IDEN:{
             symbol_list *tmp = symbol_table_find(env->env_symbol_table,ast->content);
             Tao_value *obj = tmp->obj;
@@ -854,6 +859,7 @@ exec_result *cal_exp(AST *ast,exec_env *env)
 exec_result *exec_funcall(AST *ast,exec_env *env)
 {
     //执行函数调用
+    exec_result *tar = malloc(sizeof(exec_result));
     sysfun func = sysfun_find(env->env_sysfun_list,ast->content);
     AST *args_ast = Taolist_get(AST*,0,ast->child);
     obj_list *args = symbol_list_init();
@@ -864,8 +870,9 @@ exec_result *exec_funcall(AST *ast,exec_env *env)
         exec_result *rs = cal_exp(arg_ast,env);
         symbol_list_add(&(args),arg_ast->content,rs->return_value);
     }
-    func(args);
-    return NULL;//todo return result
+    tar->return_value = func(args);
+    tar->result=R_NOR;
+    return tar;//todo return result
 }
 
 exec_result *exec_let(AST *ast,exec_env *env)
