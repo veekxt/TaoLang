@@ -32,6 +32,6 @@ int test_a_file(char *s)
 int main(void)
 {
     //test_a_file("test/primer.tao");
-    test_a_file("test/primer.tao");
+    test_a_file("test/003.tao");
     return 0;
 }

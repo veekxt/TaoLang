@@ -29,6 +29,7 @@ typedef struct sysfun_list_t
 }sysfun_list;
 
 symbol_list * symbol_list_init(void);
+void symbol_list_kill(symbol_list *l);
 void symbol_list_add(symbol_list **l,char *name,Tao_value *obj);
 sysfun_list * sysfun_list_init(void);
 void sysfun_list_add(sysfun_list **l,char *name,sysfun func);

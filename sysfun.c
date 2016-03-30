@@ -17,6 +17,19 @@ void symbol_list_add(symbol_list **l,char *name,Tao_value *obj)
     *l=head;
 }
 
+void symbol_list_kill(symbol_list *l)
+{
+    if(l==NULL) return;
+    symbol_list *tmp;
+    while(l->next!=NULL)
+    {
+        tmp=l;
+        free(l);
+        l=tmp->next;
+    }
+    free(l);
+}
+
 sysfun_list * sysfun_list_init(void)
 {
     list_init_g(sysfun_list);
