@@ -33,13 +33,13 @@ int is_addble(Tao_value*a,Tao_value*b)
     {
         if(a->type==C_BOOL||a->type==C_NONE) return 0;
         if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
-        //if(a->type==C_STR) return 0;
+        //if(a->type==C_STR) return 0;//允许字符串相加
+        return 1;
     }
     else
     {
         return 0;
     }
-    return 1;
 }
 
 int is_redble(Tao_value*a,Tao_value*b)
@@ -49,12 +49,12 @@ int is_redble(Tao_value*a,Tao_value*b)
         if(a->type==C_BOOL||a->type==C_NONE) return 0;
         if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
         if(a->type==C_STR) return 0;
+        return 1;
     }
     else
     {
         return 0;
     }
-    return 1;
 }
 
 int is_mulble(Tao_value*a,Tao_value*b)
@@ -64,27 +64,26 @@ int is_mulble(Tao_value*a,Tao_value*b)
         if(a->type==C_BOOL||a->type==C_NONE) return 0;
         if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
         if(a->type==C_STR) return 0;
+        return 1;
     }
     else
     {
         return 0;
     }
-    return 1;
 }
 
 int is_divble(Tao_value*a,Tao_value*b)
 {
     if(is_same_type(a,b))
     {
-        if(a->type==C_BOOL||a->type==C_NONE) return 0;
+        if(a->type==C_BOOL||a->type==C_NONE||a->type==C_STR) return 0;
         if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
-        if(a->type==C_STR) return 0;
+        return 1;
     }
     else
     {
         return 0;
     }
-    return 1;
 }
 
 int is_modble(Tao_value*a,Tao_value*b)
@@ -94,12 +93,146 @@ int is_modble(Tao_value*a,Tao_value*b)
         if(a->type==C_BOOL||a->type==C_NONE) return 0;
         if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
         if(a->type==C_STR) return 0;
+        return 1;
     }
     else
     {
         return 0;
     }
-    return 1;
+}
+
+int is_notble(Tao_value*a)
+{
+    if(a->type==C_BOOL)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_minusble(Tao_value*a)
+{
+    if(a->type==C_INT || a->type==C_FLOAT)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_bigerble(Tao_value*a,Tao_value*b)
+{
+    if(is_same_type(a,b))
+    {
+        if(a->type==C_BOOL||a->type==C_NONE||a->type==C_STR) return 0;
+        if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_bigereqble(Tao_value*a,Tao_value*b)
+{
+    if(is_same_type(a,b))
+    {
+        if(a->type==C_BOOL||a->type==C_NONE||a->type==C_STR) return 0;
+        if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_smallereqble(Tao_value*a,Tao_value*b)
+{
+    if(is_same_type(a,b))
+    {
+        if(a->type==C_BOOL||a->type==C_NONE||a->type==C_STR) return 0;
+        if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_smallerble(Tao_value*a,Tao_value*b)
+{
+    if(is_same_type(a,b))
+    {
+        if(a->type==C_BOOL||a->type==C_NONE||a->type==C_STR) return 0;
+        if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_equalble(Tao_value*a,Tao_value*b)
+{
+    if(is_same_type(a,b))
+    {
+        if(a->type==C_BOOL||a->type==C_NONE||a->type==C_STR) return 0;
+        if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_noteqble(Tao_value*a,Tao_value*b)
+{
+    if(is_same_type(a,b))
+    {
+        if(a->type==C_NONE) return 0;
+        if(a->type==C_USEROBJ){return 0;}//支持重载的话要补充这里
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_andble(Tao_value*a,Tao_value*b)
+{
+    if(is_same_type(a,b))
+    {
+        if(a->type==C_BOOL)return 1;
+        return 0;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+int is_orble(Tao_value*a,Tao_value*b)
+{
+    if(is_same_type(a,b))
+    {
+        if(a->type==C_BOOL) return 1;
+        return 0;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 symbol_table * symbol_table_init(void)
@@ -249,6 +382,213 @@ Tao_value *mod_two_value(Tao_value *a,Tao_value *b)
     return NULL;
 }
 
+Tao_value *not_value(Tao_value *a)
+{
+    switch(a->type)
+    {
+        case C_BOOL:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=a->type;
+            tmp->value.bool_value.val=a->value.bool_value.val==0?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+Tao_value *minus_value(Tao_value *a)
+{
+    switch(a->type)
+    {
+        case C_FLOAT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=a->type;
+            tmp->value.float_value.val=0-a->value.float_value.val;
+            return tmp;
+        }
+        break;
+        case C_INT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=a->type;
+            tmp->value.int_value.val=0-a->value.int_value.val;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+Tao_value *biger_two_value(Tao_value *a,Tao_value *b)
+{
+    switch(a->type)
+    {
+        case C_FLOAT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.float_value.val > b->value.float_value.val?1:0;
+            return tmp;
+        }
+        break;
+        case C_INT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.int_value.val > b->value.int_value.val?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+
+Tao_value *bigereq_two_value(Tao_value *a,Tao_value *b)
+{
+    switch(a->type)
+    {
+        case C_FLOAT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.float_value.val >= b->value.float_value.val?1:0;
+            return tmp;
+        }
+        break;
+        case C_INT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.int_value.val >= b->value.int_value.val?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+Tao_value *smaller_two_value(Tao_value *a,Tao_value *b)
+{
+    switch(a->type)
+    {
+        case C_FLOAT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.float_value.val < b->value.float_value.val?1:0;
+            return tmp;
+        }
+        break;
+        case C_INT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.int_value.val < b->value.int_value.val?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+Tao_value *smallereq_two_value(Tao_value *a,Tao_value *b)
+{
+    switch(a->type)
+    {
+        case C_FLOAT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.float_value.val <= b->value.float_value.val?1:0;
+            return tmp;
+        }
+        break;
+        case C_INT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.int_value.val <= b->value.int_value.val?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+Tao_value *equal_two_value(Tao_value *a,Tao_value *b)
+{
+    switch(a->type)
+    {
+        case C_FLOAT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.float_value.val == b->value.float_value.val?1:0;
+            return tmp;
+        }
+        break;
+        case C_INT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.int_value.val == b->value.int_value.val?1:0;
+            return tmp;
+        }
+        break;
+        case C_BOOL:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.bool_value.val == b->value.bool_value.val?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+Tao_value *noteq_two_value(Tao_value *a,Tao_value *b)
+{
+    switch(a->type)
+    {
+        case C_FLOAT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.float_value.val != b->value.float_value.val?1:0;
+            return tmp;
+        }
+        break;
+        case C_INT:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=a->value.int_value.val != b->value.int_value.val?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+Tao_value *and_two_value(Tao_value *a,Tao_value *b)
+{
+    switch(a->type)
+    {
+        case C_BOOL:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=(a->value.bool_value.val && b->value.bool_value.val)?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
+Tao_value *or_two_value(Tao_value *a,Tao_value *b)
+{
+    switch(a->type)
+    {
+        case C_BOOL:{
+            Tao_value *tmp = malloc(sizeof(Tao_value));
+            tmp->type=C_BOOL;
+            tmp->value.bool_value.val=(a->value.bool_value.val || b->value.bool_value.val)?1:0;
+            return tmp;
+        }
+        break;
+    }
+    return NULL;
+}
+
 exec_env *make_init_env(void)
 {
     exec_env *env = malloc(sizeof(exec_env));
@@ -287,6 +627,36 @@ exec_result *cal_exp(AST *ast,exec_env *env)
             tar->result=R_NOR;
         }
         break;
+        case A_NOT:{
+            AST *ast_exp = Taolist_get(AST*,0,ast->child);
+            exec_result *rs = cal_exp(ast_exp,env);
+            Tao_value *rs_val = rs->return_value;
+            if(is_notble(rs_val))
+            {
+                tar->return_value = not_value(rs_val);
+                free(rs);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \"!\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_MINUS:{
+            AST *ast_exp = Taolist_get(AST*,0,ast->child);
+            exec_result *rs = cal_exp(ast_exp,env);
+            Tao_value *rs_val = rs->return_value;
+            if(is_minusble(rs_val))
+            {
+                tar->return_value = minus_value(rs_val);
+                free(rs);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \"-\" ,type error",ast,1);
+            }
+        }
+        break;
         #define make_left_right_ast \
         AST *ast_left = Taolist_get(AST*,0,ast->child);\
         AST *ast_right = Taolist_get(AST*,1,ast->child);\
@@ -300,10 +670,11 @@ exec_result *cal_exp(AST *ast,exec_env *env)
             if(is_addble(left_val,right_val))
             {
                 tar->return_value = add_two_value(left_val,right_val);
+                free(left);free(right);
                 tar->result=R_NOR;
             }else
             {
-                exec_error("canot add ,type error",ast,1);
+                exec_error("cannot \"+\" ,type error",ast,1);
             }
         }
         break;
@@ -312,10 +683,11 @@ exec_result *cal_exp(AST *ast,exec_env *env)
             if(is_redble(left_val,right_val))
             {
                 tar->return_value = red_two_value(left_val,right_val);
+                free(left);free(right);
                 tar->result=R_NOR;
             }else
             {
-                exec_error("canot subtract ,type error",ast,1);
+                exec_error("cannot \"-\" ,type error",ast,1);
             }
         }
         break;
@@ -324,10 +696,11 @@ exec_result *cal_exp(AST *ast,exec_env *env)
             if(is_mulble(left_val,right_val))
             {
                 tar->return_value = mul_two_value(left_val,right_val);
+                free(left);free(right);
                 tar->result=R_NOR;
             }else
             {
-                exec_error("canot multiply ,type error",ast,1);
+                exec_error("cannot \"*\" ,type error",ast,1);
             }
         }
         break;
@@ -336,10 +709,11 @@ exec_result *cal_exp(AST *ast,exec_env *env)
             if(is_divble(left_val,right_val))
             {
                 tar->return_value = div_two_value(left_val,right_val);
+                free(left);free(right);
                 tar->result=R_NOR;
             }else
             {
-                exec_error("canot divide ,type error",ast,1);
+                exec_error("cannot \"/\" ,type error",ast,1);
             }
         }
         break;
@@ -348,10 +722,115 @@ exec_result *cal_exp(AST *ast,exec_env *env)
             if(is_modble(left_val,right_val))
             {
                 tar->return_value = mod_two_value(left_val,right_val);
+                free(left);free(right);
                 tar->result=R_NOR;
             }else
             {
-                exec_error("canot mod ,type error",ast,1);
+                exec_error("cannot \"%\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_BIGER:{
+            make_left_right_ast
+            if(is_bigerble(left_val,right_val))
+            {
+                tar->return_value = biger_two_value(left_val,right_val);
+                free(left);free(right);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \">\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_BIGEREQ:{
+            make_left_right_ast
+            if(is_bigereqble(left_val,right_val))
+            {
+                tar->return_value = bigereq_two_value(left_val,right_val);
+                free(left);free(right);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \">=\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_SMALLER:{
+            make_left_right_ast
+            if(is_smallerble(left_val,right_val))
+            {
+                tar->return_value = smaller_two_value(left_val,right_val);
+                free(left);free(right);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \"<\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_SMALLEREQ:{
+            make_left_right_ast
+            if(is_smallereqble(left_val,right_val))
+            {
+                tar->return_value = smallereq_two_value(left_val,right_val);
+                free(left);free(right);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \"<=\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_EQUAL:{
+            make_left_right_ast
+            if(is_equalble(left_val,right_val))
+            {
+                tar->return_value = equal_two_value(left_val,right_val);
+                free(left);free(right);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \"==\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_NOTEQ:{
+            make_left_right_ast
+            if(is_noteqble(left_val,right_val))
+            {
+                tar->return_value = noteq_two_value(left_val,right_val);
+                free(left);free(right);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \"!=\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_AND:{
+            make_left_right_ast
+            if(is_andble(left_val,right_val))
+            {
+                tar->return_value = and_two_value(left_val,right_val);
+                free(left);free(right);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \"and\" ,type error",ast,1);
+            }
+        }
+        break;
+        case A_OR:{
+            make_left_right_ast
+            if(is_orble(left_val,right_val))
+            {
+                tar->return_value = or_two_value(left_val,right_val);
+                free(left);free(right);
+                tar->result=R_NOR;
+            }else
+            {
+                exec_error("cannot \"or\" ,type error",ast,1);
             }
         }
         break;

@@ -17,9 +17,14 @@ int main()
     puts("\nAST:");
     if(A!=NULL)AST_print(A,0,0);
 
-    puts("");
-    exec_env *env = make_init_env();
-    exec_stmt(A,env);
-
+    if(PARSER_STATUS.IS_RIGHT)
+    {
+        puts("\ninterpret:");
+        exec_env *env = make_init_env();
+        exec_stmt(A,env);
+    }else
+    {
+        puts("\nparser error , so will not intepret!");
+    }
     return 0;
 }
