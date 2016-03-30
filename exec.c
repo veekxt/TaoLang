@@ -248,24 +248,24 @@ void symbol_table_add(symbol_table **l,symbol_list *s_head)
     *l=head;
 }
 
-Tao_value * symbol_list_find(symbol_list *l,char *s)
+symbol_list * symbol_list_find(symbol_list *l,char *s)
 {
     while(l->next!=NULL)
     {
         if(strcmp(l->name,s)==0)
         {
-            return l->obj;
+            return l;
         }
         l=l->next;
     }
     return NULL;
 }
 
-Tao_value * symbol_table_find(symbol_table *l,char *s)
+symbol_list * symbol_table_find(symbol_table *l,char *s)
 {
     while(l->next!=NULL)
     {
-        Tao_value *tmp=symbol_list_find(l->head,s);
+        symbol_list *tmp=symbol_list_find(l->head,s);
         if(tmp==NULL)
         {
             l=l->next;
@@ -604,7 +604,20 @@ exec_result *cal_exp(AST *ast,exec_env *env)
     switch(ast->type)
     {
         case A_IDEN:{
-            Tao_value *obj = symbol_table_find(env->env_symbol_table,ast->content);
+            symbol_list *tmp = symbol_table_find(env->env_symbol_table,ast->content);
+            Tao_value *obj = tmp->obj;
+            //todo：错误处理,是否能找到iden
+            tar->return_value=obj;
+            tar->result=R_NOR;
+        }
+        break;
+        case A_TRUE:{
+            Tao_value *obj = new_bool(1);
+            tar->return_value=obj;
+            tar->result=R_NOR;
+        }
+        case A_FALSE:{
+            Tao_value *obj = new_bool(0);
             tar->return_value=obj;
             tar->result=R_NOR;
         }
@@ -863,6 +876,16 @@ exec_result *exec_let(AST *ast,exec_env *env)
     return NULL;//todo return result
 }
 
+exec_result *exec_assign(AST *ast,exec_env *env)
+{
+    AST *left =Taolist_get(AST*,0,ast->child);
+    AST *right =Taolist_get(AST*,1,ast->child);
+
+    symbol_list *tmp = symbol_table_find(env->env_symbol_table,left->content);
+    tmp->obj = cal_exp(right,env)->return_value;
+    return NULL;
+}
+
 exec_result *exec_stmt(AST *ast,exec_env *env)
 {
     for(int i = 0;i<ast->child->len;i++)
@@ -878,6 +901,11 @@ exec_result *exec_stmt(AST *ast,exec_env *env)
             case A_FUNCALL:
             {
                 exec_funcall(a_child,env);
+            }
+            break;
+            case A_ASSIGN:
+            {
+                exec_assign(a_child,env);
             }
             break;
             default:;
