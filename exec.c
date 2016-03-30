@@ -925,6 +925,34 @@ exec_result *exec_if(AST *ast,exec_env *env)
     return NULL;
 }
 
+exec_result *exec_while(AST *ast,exec_env *env)
+{
+    AST *exp =Taolist_get(AST*,0,ast->child);
+    AST *while_stmt =Taolist_get(AST*,1,ast->child);
+    //todo 错误处理
+
+    for(;;)
+    {
+        Tao_value *exp_rs = cal_exp(exp,env)->return_value;
+        if(exp_rs->type==C_BOOL)
+        {
+            if(exp_rs->value.bool_value.val==1)
+            {
+                exec_stmt(while_stmt,env);
+            }
+            else
+            {
+                break;
+            }
+        }else
+        {
+            exec_error("if need a bool value , type error",ast,1);
+        }
+    }
+
+    return NULL;
+}
+
 exec_result *exec_stmt(AST *ast,exec_env *env)
 {
     for(int i = 0;i<ast->child->len;i++)
@@ -950,6 +978,11 @@ exec_result *exec_stmt(AST *ast,exec_env *env)
             case A_IF:
             {
                 exec_if(a_child,env);
+            }
+            break;
+            case A_WHILE:
+            {
+                exec_while(a_child,env);
             }
             break;
             default:;

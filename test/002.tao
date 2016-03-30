@@ -1,0 +1,12 @@
+
+//测试简单while ，输出3的倍数
+let s=0
+let i=0
+
+while s<=100
+{
+    if s%3 == 0 {
+        print(s)
+    }
+    s+=1
+}

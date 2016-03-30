@@ -269,7 +269,7 @@ AST * build_root_stmt(Taolist *t,AST_type where)
         case T_SEMI_N:
             match_n(t,1);
             cur = get_token(0,0,t);
-            if(in_block(where) && cur->type==T_SEMI)return root;
+            if(in_block(where) && cur->type==T_RBRACE)return root;
             tmp = build_stmt(t,where);
             if(tmp==NULL)
             {
@@ -280,7 +280,7 @@ AST * build_root_stmt(Taolist *t,AST_type where)
             break;
         case T_END:
             return root;
-        case T_SEMI:
+        case T_RBRACE:
             if(in_block(where)){return root;}//if语句允许分号不换行
         default:
         {
@@ -392,11 +392,11 @@ AST * build_one_if_stmt(Taolist *t,token *cur)
     else {root->type=A_STMT;root->line=cur->line;}
     if(type!=T_ELSE)add_child_node(root,build_exp(t));
     del_void_token(t);
-    match(T_SVISIT,t,root);
+    match(T_LBRACE,t,root);
     AST *tmp= build_root_stmt(t,A_IF);
     add_child_node(root,tmp);
 
-    match(T_SEMI,t,root);
+    match(T_RBRACE,t,root);
     if(type==T_ELSE)
     {
         AST_free(root);
@@ -457,29 +457,30 @@ AST * build_while_stmt(Taolist *t)
 
     add_child_node(root,build_exp(t));
     del_void_token(t);
-    match(T_SVISIT,t,root);
+    match(T_LBRACE,t,root);
     AST *tmp= build_root_stmt(t,A_WHILE);
     add_child_node(root,tmp);
 
-    match(T_SEMI,t,root);
+    match(T_RBRACE,t,root);
     return root;
 }
 
 AST * build_if_stmt(Taolist *t)
 {
     token *cur = get_token(0,0,t);
+    token *next = get_token(1,0,t);
     AST *root = build_one_if_stmt(t,cur);
     AST *target = root;
-    del_void_token(t);
     if(root!=NULL)
     {
         for(;;)
         {
             cur = get_token(0,0,t);
-            if(cur->type == T_ELIF)
+            next = get_token(1,0,t);
+            if(cur->type == T_ELIF||next->type == T_ELIF)
             {
-                AST *tmp = build_one_if_stmt(t,cur);
                 del_void_token(t);
+                AST *tmp = build_one_if_stmt(t,cur);
                 add_child_node(target,tmp);
                 target=tmp;
             }else
@@ -488,14 +489,16 @@ AST * build_if_stmt(Taolist *t)
             }
         }
     }
-    del_void_token(t);
     cur = get_token(0,0,t);
-    if(cur->type == T_ELSE)
+    next = get_token(1,0,t);
+    if(cur->type == T_ELSE||next->type == T_ELSE)
     {
+        del_void_token(t);
         AST *tmp = build_one_if_stmt(t,cur);
         add_child_node(target,tmp);
         target=tmp;
     }
+    print_token(get_token(0,0,t));
     return root;
 }
 
@@ -851,8 +854,8 @@ AST *build_fun_def_stmt(Taolist *t)
     match(T_LPAR,t,root);
     add_child_node(root,build_fun_args(t));
     match(T_RPAR,t,root);
-    match(T_SVISIT,t,root);
+    match(T_LBRACE,t,root);
     add_child_node(root,build_root_stmt(t,A_FUNDEF));
-    match(T_SEMI,t,root);
+    match(T_RBRACE,t,root);
     return root;
 }

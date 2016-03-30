@@ -8,3 +8,4 @@ tmp*
 *.temp
 tao
 tags
+*.cscope*

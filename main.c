@@ -7,7 +7,7 @@
 int main()
 {
     //Taolist *x = file_to_token_list("test/primer.tao");
-    Taolist *x = file_to_token_list("test/001.tao");
+    Taolist *x = file_to_token_list("test/002.tao");
     puts("token:");
     if(x!=NULL)print_token_l(x);
     if(x->status==-1)puts("note: tokenizer has error !");
