@@ -17,6 +17,6 @@ while(j <= 100)
         i=i+1
     }
     # print(i,",",j,"\n")
-    if(i==j){print(j," is primer","\n")}
+    if(i==j){print(j," ")}
     j=j-(-1)
 }
