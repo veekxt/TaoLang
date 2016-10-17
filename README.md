@@ -7,3 +7,11 @@
 重构之前的版本见old分支
 
 再次弃坑
+
+运行demo(输出100以内素数)：
+
+```
+make
+./tao test/primer.tao
+
+```
