@@ -90,7 +90,7 @@ Tao_value *sys_print(obj_list *args)
             printf("%f",args->obj->value.float_value.val);
         break;
         case C_BOOL:
-            printf(args->obj->value.bool_value.val==0?"false":"true");
+            printf(args->obj->value.bool_value.val==0?"False":"True");
         break;
         case C_STR:
             printf("%s",args->obj->value.str_value.val);
